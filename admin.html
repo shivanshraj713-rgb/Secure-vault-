@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SecureVault - Admin Panel</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* All CSS from previous admin.html remains the same */
         * {
             margin: 0;
             padding: 0;
@@ -14,13 +14,209 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: white;
         }
 
+        /* Admin Password Screen */
+        .password-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .password-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .admin-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 36px;
+            color: white;
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        /* Admin Login Screen */
+        .login-screen {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 14px;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .password-input {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+        }
+
+        /* Button Styles */
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Error Message */
+        .error-message {
+            background: rgba(220, 53, 69, 0.2);
+            color: #ff6b6b;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: left;
+            font-size: 14px;
+            display: none;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Back to Home */
+        .back-home {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .back-home a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: color 0.3s;
+        }
+
+        .back-home a:hover {
+            color: white;
+        }
+
+        /* Admin Dashboard */
         .admin-container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
+            display: none;
         }
 
         .header {
@@ -42,14 +238,20 @@
         }
 
         .stat-card {
-            background: white;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
         }
 
         .stat-card h3 {
-            color: #666;
+            color: rgba(255, 255, 255, 0.7);
             font-size: 14px;
             margin-bottom: 10px;
         }
@@ -57,7 +259,7 @@
         .stat-card .value {
             font-size: 32px;
             font-weight: bold;
-            color: #333;
+            color: white;
         }
 
         .content-area {
@@ -73,10 +275,11 @@
         }
 
         .card {
-            background: white;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         table {
@@ -88,12 +291,14 @@
         th, td {
             padding: 12px;
             text-align: left;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
         }
 
         th {
-            background: #f8f9fa;
+            background: rgba(255, 255, 255, 0.05);
             font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
         }
 
         .btn {
@@ -102,11 +307,6 @@
             border-radius: 5px;
             cursor: pointer;
             font-weight: 600;
-        }
-
-        .btn-primary {
-            background: #667eea;
-            color: white;
         }
 
         .btn-success {
@@ -136,17 +336,9 @@
             color: #333;
         }
 
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-
         .notification-box {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
+            background: rgba(255, 243, 205, 0.1);
+            border: 1px solid rgba(255, 234, 167, 0.2);
             padding: 15px;
             border-radius: 5px;
             margin-top: 20px;
@@ -159,32 +351,40 @@
         .search-box input {
             width: 100%;
             padding: 12px;
-            border: 2px solid #667eea;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
             border-radius: 5px;
             font-size: 16px;
+            color: white;
+        }
+
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
         }
 
         .loading {
             text-align: center;
             padding: 40px;
-            color: #666;
+            color: rgba(255, 255, 255, 0.7);
         }
 
         .tab-navigation {
             display: flex;
             margin-bottom: 20px;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .tab {
             padding: 15px 25px;
             cursor: pointer;
             border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            color: rgba(255, 255, 255, 0.7);
         }
 
         .tab.active {
             border-bottom-color: #667eea;
-            color: #667eea;
+            color: white;
             font-weight: bold;
         }
 
@@ -192,22 +392,185 @@
             height: 300px;
             margin-top: 20px;
         }
+
+        /* Admin Info */
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: #667eea;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .password-box, .login-box {
+                padding: 20px;
+            }
+            
+            .content-area {
+                grid-template-columns: 1fr;
+            }
+            
+            .tab-navigation {
+                flex-wrap: wrap;
+            }
+            
+            .tab {
+                flex: 1;
+                min-width: 120px;
+                text-align: center;
+                padding: 12px 10px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .admin-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        /* Security Alert */
+        .security-alert {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            color: #ff6b6b;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+
+        .security-alert i {
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
-    <div class="admin-container">
+    <!-- Step 1: Admin Password Screen -->
+    <div class="password-screen" id="passwordScreen">
+        <div class="password-box">
+            <div class="admin-logo">🔐</div>
+            <h1>Admin Access</h1>
+            <p class="subtitle">Enter admin password to continue</p>
+            
+            <div class="error-message" id="passwordError"></div>
+            
+            <div class="form-group">
+                <label for="adminPassword">Admin Password</label>
+                <div class="password-input">
+                    <input type="password" class="form-control" id="adminPassword" placeholder="Enter admin password">
+                    <button class="toggle-password" type="button" onclick="togglePassword('adminPassword')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="security-alert">
+                <i class="fas fa-shield-alt"></i>
+                Restricted Area: Authorized Personnel Only
+            </div>
+            
+            <button class="btn btn-primary" onclick="verifyAdminPassword()">
+                <i class="fas fa-lock"></i> Verify & Continue
+            </button>
+            
+            <div class="back-home">
+                <a href="index.html">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 2: Admin Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <div class="admin-logo">👑</div>
+            <h1>Admin Login</h1>
+            <p class="subtitle">Use admin credentials to access dashboard</p>
+            
+            <div class="error-message" id="loginError"></div>
+            
+            <div class="form-group">
+                <label for="adminEmail">Admin Email</label>
+                <input type="email" class="form-control" id="adminEmail" placeholder="shivanshraj713@gmail.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="adminLoginPassword">Password</label>
+                <div class="password-input">
+                    <input type="password" class="form-control" id="adminLoginPassword" placeholder="Enter password">
+                    <button class="toggle-password" type="button" onclick="togglePassword('adminLoginPassword')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary" onclick="loginAdmin()">
+                <i class="fas fa-sign-in-alt"></i> Login as Admin
+            </button>
+            
+            <button class="btn btn-secondary" onclick="goBackToPasswordScreen()">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            
+            <div class="back-home">
+                <a href="index.html">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 3: Admin Dashboard -->
+    <div class="admin-container" id="adminContainer">
         <!-- Header -->
         <div class="header">
-            <h1><i class="fas fa-shield-alt"></i> SecureVault Admin Panel</h1>
-            <div>
-                <button class="btn btn-danger" id="logoutBtn">
+            <h2><i class="fas fa-shield-alt"></i> SecureVault Admin Panel</h2>
+            <div class="admin-info">
+                <div class="admin-avatar" id="adminAvatar">S</div>
+                <div>
+                    <div id="adminName">Admin</div>
+                    <div style="font-size: 12px; opacity: 0.8;">Logged in as: shivanshraj713@gmail.com</div>
+                </div>
+                <!-- Home Button -->
+                <button class="btn" onclick="goToHome()" style="margin-right: 10px;">
+                    <i class="fas fa-home"></i> Home
+                </button>
+                <button class="btn btn-danger" onclick="logoutAdmin()">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </button>
-                
-                <!-- Add this button to admin.html header -->
-<button class="btn" onclick="goToHome()" style="margin-right: 10px;">
-    <i class="fas fa-home"></i> Home
-</button>
             </div>
         </div>
 
@@ -227,8 +590,10 @@
 
         <!-- Stats Overview -->
         <div id="statsOverview" class="stats-container">
-            <!-- Stats will be loaded here -->
-            <div class="loading">Loading statistics...</div>
+            <div class="loading">
+                <div class="spinner"></div>
+                Loading statistics...
+            </div>
         </div>
 
         <!-- Content Area -->
@@ -274,47 +639,207 @@
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 
     <script type="module">
         // Import Firebase modules
         import { 
-            auth, db, 
-            collection, doc, getDoc, getDocs, 
-            query, where, orderBy, updateDoc, deleteDoc,
-            onAuthStateChanged, signOut
+            auth, 
+            db,
+            signInWithEmailAndPassword,
+            signOut
         } from './firebase-config.js';
 
-        // Admin Email (Configure this)
-        const ADMIN_EMAIL = "admin@securevault.com";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+        import { 
+            collection, doc, getDoc, getDocs, 
+            query, where, orderBy, updateDoc, deleteDoc,
+            addDoc 
+        } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-        // Initialize Admin Panel
-        document.addEventListener('DOMContentLoaded', initAdminPanel);
+        // Admin Configuration
+        const ADMIN_PASSWORD = "Shivansh raj";  // First step password
+        const ADMIN_EMAIL = "shivanshraj713@gmail.com";
+        const ADMIN_LOGIN_PASSWORD = "9794294468sr";  // Second step password
 
-        async function initAdminPanel() {
-            // Setup event listener
-            document.getElementById('logoutBtn').addEventListener('click', logoutHandler);
-            
-            // Check admin authentication
-            onAuthStateChanged(auth, async (user) => {
-                if (user && user.email === ADMIN_EMAIL) {
-                    // Set admin custom claim
-                    await setAdminClaim(user);
-                    loadDashboard();
-                } else {
-                    // Redirect to login
-                    window.location.href = 'users.html';
-                }
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', initAdmin);
+
+        function initAdmin() {
+            // Set up enter key listeners
+            document.getElementById('adminPassword')?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') verifyAdminPassword();
             });
+            
+            document.getElementById('adminLoginPassword')?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') loginAdmin();
+            });
+
+            // Show password screen first
+            showPasswordScreen();
         }
 
-        // Set admin custom claim
-        async function setAdminClaim(user) {
-            // In production, this should be done via Cloud Function
-            const idToken = await user.getIdTokenResult();
-            if (!idToken.claims.admin) {
-                alert('You need admin privileges to access this panel');
-                window.location.href = 'users.html';
+        // Show/Hide Screens
+        function showPasswordScreen() {
+            document.getElementById('passwordScreen').style.display = 'flex';
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminContainer').style.display = 'none';
+            clearErrors();
+        }
+
+        function showLoginScreen() {
+            document.getElementById('passwordScreen').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('adminContainer').style.display = 'none';
+            clearErrors();
+            // Pre-fill admin email
+            document.getElementById('adminEmail').value = ADMIN_EMAIL;
+        }
+
+        function showAdminDashboard() {
+            document.getElementById('passwordScreen').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminContainer').style.display = 'block';
+            loadDashboard();
+        }
+
+        // Clear error messages
+        function clearErrors() {
+            document.getElementById('passwordError').textContent = '';
+            document.getElementById('passwordError').classList.remove('show');
+            document.getElementById('loginError').textContent = '';
+            document.getElementById('loginError').classList.remove('show');
+        }
+
+        // Show error messages
+        function showPasswordError(message) {
+            const errorElement = document.getElementById('passwordError');
+            errorElement.textContent = message;
+            errorElement.classList.add('show');
+        }
+
+        function showLoginError(message) {
+            const errorElement = document.getElementById('loginError');
+            errorElement.textContent = message;
+            errorElement.classList.add('show');
+        }
+
+        // Toggle password visibility
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.nextElementSibling.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Step 1: Verify Admin Password
+        function verifyAdminPassword() {
+            const enteredPassword = document.getElementById('adminPassword').value;
+            
+            if (!enteredPassword) {
+                showPasswordError('Please enter admin password');
+                return;
+            }
+            
+            if (enteredPassword === ADMIN_PASSWORD) {
+                // Password correct, proceed to login screen
+                document.getElementById('adminPassword').value = '';
+                showLoginScreen();
+            } else {
+                showPasswordError('Invalid admin password');
+                document.getElementById('adminPassword').value = '';
+                document.getElementById('adminPassword').focus();
+            }
+        }
+
+        // Step 2: Login with Admin Credentials
+        async function loginAdmin() {
+            const email = document.getElementById('adminEmail').value.trim();
+            const password = document.getElementById('adminLoginPassword').value;
+            
+            if (!email || !password) {
+                showLoginError('Please enter both email and password');
+                return;
+            }
+            
+            if (email !== ADMIN_EMAIL) {
+                showLoginError('Invalid admin email address');
+                return;
+            }
+            
+            if (password !== ADMIN_LOGIN_PASSWORD) {
+                showLoginError('Invalid admin password');
+                return;
+            }
+            
+            try {
+                // Sign in with Firebase Authentication
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                console.log('Admin logged in:', userCredential.user);
+                
+                // Check if this is actually the admin email
+                if (userCredential.user.email === ADMIN_EMAIL) {
+                    showAdminDashboard();
+                } else {
+                    showLoginError('Unauthorized admin access');
+                    await signOut(auth);
+                }
+                
+            } catch (error) {
+                console.error('Admin login error:', error);
+                
+                // User-friendly error messages
+                switch (error.code) {
+                    case 'auth/invalid-credential':
+                    case 'auth/wrong-password':
+                        showLoginError('Invalid email or password');
+                        break;
+                    case 'auth/user-not-found':
+                        showLoginError('Admin account not found');
+                        break;
+                    case 'auth/user-disabled':
+                        showLoginError('Admin account has been disabled');
+                        break;
+                    case 'auth/too-many-requests':
+                        showLoginError('Too many failed attempts. Please try again later');
+                        break;
+                    default:
+                        showLoginError('Login failed: ' + error.message);
+                }
+            }
+        }
+
+        // Go back to password screen
+        function goBackToPasswordScreen() {
+            document.getElementById('adminEmail').value = '';
+            document.getElementById('adminLoginPassword').value = '';
+            showPasswordScreen();
+        }
+
+        // Home Button Function
+        function goToHome() {
+            window.location.href = "index.html";
+        }
+
+        // Logout Admin
+        async function logoutAdmin() {
+            if (confirm('Are you sure you want to logout?')) {
+                try {
+                    await signOut(auth);
+                    document.getElementById('adminEmail').value = '';
+                    document.getElementById('adminLoginPassword').value = '';
+                    showPasswordScreen();
+                } catch (error) {
+                    console.error('Error signing out:', error);
+                    alert('Failed to logout');
+                }
             }
         }
 
@@ -374,7 +899,7 @@
                     <div class="stat-card">
                         <h3>Premium Users</h3>
                         <div class="value">${premiumUsers}</div>
-                        <div>${Math.round((premiumUsers / totalUsers) * 100)}% conversion</div>
+                        <div style="color: rgba(255,255,255,0.7); font-size: 12px;">${Math.round((premiumUsers / totalUsers) * 100) || 0}% conversion</div>
                     </div>
                     <div class="stat-card">
                         <h3>Today's Signups</h3>
@@ -383,7 +908,7 @@
                     <div class="stat-card">
                         <h3>Total Items</h3>
                         <div class="value">${totalStorage}</div>
-                        <div>${totalDocuments} documents stored</div>
+                        <div style="color: rgba(255,255,255,0.7); font-size: 12px;">${totalDocuments} documents stored</div>
                     </div>
                 `;
                 
@@ -433,8 +958,8 @@
                                     <img src="${photoURL}" 
                                          style="width: 30px; height: 30px; border-radius: 50%;">
                                     <div>
-                                        <div>${name}</div>
-                                        <small style="color: #666;">${email}</small>
+                                        <div style="color: white;">${name}</div>
+                                        <small style="color: rgba(255,255,255,0.7);">${email}</small>
                                     </div>
                                 </div>
                             </td>
@@ -443,10 +968,10 @@
                                     '<span class="badge badge-premium">PREMIUM</span>' : 
                                     '<span class="badge badge-free">FREE</span>'}
                             </td>
-                            <td>${totalItems}</td>
-                            <td>${joinDate}</td>
+                            <td style="color: white;">${totalItems}</td>
+                            <td style="color: rgba(255,255,255,0.8);">${joinDate}</td>
                             <td>
-                                <button class="btn btn-primary" onclick="viewUserDetails('${userId}')">
+                                <button class="btn" onclick="viewUserDetails('${userId}')" style="background: rgba(255,255,255,0.1); color: white; margin-right: 5px;">
                                     <i class="fas fa-eye"></i>
                                 </button>
                                 ${!user.isPremium ? 
@@ -466,7 +991,7 @@
                 
             } catch (error) {
                 console.error('Error loading users:', error);
-                document.getElementById('usersList').innerHTML = 'Error loading users';
+                document.getElementById('usersList').innerHTML = '<div class="loading">Error loading users</div>';
             }
         }
 
@@ -515,10 +1040,10 @@
                     
                     paymentsHTML += `
                         <tr>
-                            <td>${userName}</td>
-                            <td>${payment.plan || 'Monthly'}</td>
-                            <td>${upgradedDate}</td>
-                            <td>${expiryDate.toLocaleDateString()}</td>
+                            <td style="color: white;">${userName}</td>
+                            <td style="color: rgba(255,255,255,0.8);">${payment.plan || 'Monthly'}</td>
+                            <td style="color: rgba(255,255,255,0.8);">${upgradedDate}</td>
+                            <td style="color: rgba(255,255,255,0.8);">${expiryDate.toLocaleDateString()}</td>
                             <td>
                                 ${isActive ? 
                                     '<span style="color: #28a745;">✓ Active</span>' : 
@@ -533,7 +1058,7 @@
                 
             } catch (error) {
                 console.error('Error loading payments:', error);
-                document.getElementById('paymentsList').innerHTML = 'Error loading payments';
+                document.getElementById('paymentsList').innerHTML = '<div class="loading">Error loading payments</div>';
             }
         }
 
@@ -550,11 +1075,11 @@
                         label: 'Storage Distribution',
                         data: [0, 0, 0, 0, 0],
                         backgroundColor: [
-                            'rgba(255, 99, 132, 0.5)',
-                            'rgba(54, 162, 235, 0.5)',
-                            'rgba(255, 206, 86, 0.5)',
-                            'rgba(75, 192, 192, 0.5)',
-                            'rgba(153, 102, 255, 0.5)'
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(153, 102, 255, 0.7)'
                         ],
                         borderColor: [
                             'rgba(255, 99, 132, 1)',
@@ -569,9 +1094,30 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'white'
+                            }
+                        }
+                    },
                     scales: {
                         y: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.8)'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.8)'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
                         }
                     }
                 }
@@ -736,13 +1282,13 @@
                     const usage = userData.usage || {};
                     
                     let details = `
-                        <strong>User Details:</strong><br>
+                        <strong style="color: white;">User Details:</strong><br>
                         Name: ${userData.name || 'N/A'}<br>
                         Email: ${userData.email || 'N/A'}<br>
                         Status: ${userData.isPremium ? 'Premium' : 'Free'}<br>
                         Joined: ${userData.createdAt?.toDate().toLocaleDateString() || 'N/A'}<br><br>
                         
-                        <strong>Storage Usage:</strong><br>
+                        <strong style="color: white;">Storage Usage:</strong><br>
                     `;
                     
                     for (const [key, value] of Object.entries(usage)) {
@@ -790,8 +1336,7 @@
             try {
                 const notificationsQuery = query(
                     collection(db, 'notifications'),
-                    orderBy('sentAt', 'desc'),
-                    where('sentBy', '==', auth.currentUser.uid)
+                    orderBy('sentAt', 'desc')
                 );
                 
                 const notificationsSnapshot = await getDocs(notificationsQuery);
@@ -799,7 +1344,7 @@
                 let notificationsHTML = '<h3>Sent Notifications</h3>';
                 
                 if (notificationsSnapshot.empty) {
-                    notificationsHTML += '<p>No notifications sent yet.</p>';
+                    notificationsHTML += '<p style="color: rgba(255,255,255,0.7);">No notifications sent yet.</p>';
                 } else {
                     notificationsHTML += '<table><thead><tr><th>Title</th><th>Target</th><th>Sent At</th></tr></thead><tbody>';
                     
@@ -807,9 +1352,9 @@
                         const notification = docSnap.data();
                         notificationsHTML += `
                             <tr>
-                                <td>${notification.title}</td>
-                                <td>${notification.target}</td>
-                                <td>${new Date(notification.sentAt).toLocaleString()}</td>
+                                <td style="color: white;">${notification.title}</td>
+                                <td style="color: rgba(255,255,255,0.8);">${notification.target}</td>
+                                <td style="color: rgba(255,255,255,0.8);">${new Date(notification.sentAt).toLocaleString()}</td>
                             </tr>
                         `;
                     });
@@ -860,30 +1405,8 @@
         }
 
         async function saveSettings() {
-            // Implement settings save logic here
             alert('Settings saved! (This would update Firestore in production)');
         }
-
-        // Logout Handler
-        async function logoutHandler() {
-            try {
-                await signOut(auth);
-                window.location.href = 'users.html';
-            } catch (error) {
-                console.error('Error signing out:', error);
-                alert('Failed to logout');
-            }
-        }
-
-        // Initialize
-        initAdminPanel();
-        </script>
-        <script>
-
-<!-- Add this function to admin.html script -->
-function goToHome() {
-    window.location.href = "index.html";
-}
     </script>
 </body>
 </html>
