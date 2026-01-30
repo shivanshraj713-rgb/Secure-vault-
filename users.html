@@ -621,297 +621,337 @@
     </div>
 
     <!-- Firebase SDKs -->
-    <script type="module">
-        // Import the functions you need from the SDKs
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { 
-            getAuth, 
-            createUserWithEmailAndPassword, 
-            signInWithEmailAndPassword, 
-            signInWithPopup, 
-            GoogleAuthProvider,
-            signOut,
-            onAuthStateChanged,
-            sendPasswordResetEmail
-        } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-        import { 
-            getFirestore, 
-            collection, 
-            doc, 
-            setDoc, 
-            getDoc, 
-            updateDoc, 
-            addDoc, 
-            query, 
-            where, 
-            orderBy, 
-            getDocs, 
-            deleteDoc,
-            serverTimestamp
-        } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-        import { 
-            getStorage,
-            ref,
-            uploadBytes,
-            getDownloadURL,
-            deleteObject
-        } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
 
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyAPi764UXdaw3tfWpUGekoflOW-LK-xVtU",
-            authDomain: "vault-2d534.firebaseapp.com",
-            databaseURL: "https://vault-2d534-default-rtdb.firebaseio.com",
-            projectId: "vault-2d534",
-            storageBucket: "vault-2d534.firebasestorage.app",
-            messagingSenderId: "934380066941",
-            appId: "1:934380066941:web:e3439bb584338da9de3914"
-        };
+<!-- In users.html, replace the entire script section with: -->
+<script type="module">
+    // Import from firebase-config.js
+    import { 
+        auth, 
+        db, 
+        storage, 
+        googleProvider,
+        createUserWithEmailAndPassword,
+        signInWithEmailAndPassword,
+        signInWithPopup,
+        signOut,
+        onAuthStateChanged,
+        sendPasswordResetEmail,
+        collection, 
+        doc, 
+        getDoc, 
+        setDoc, 
+        updateDoc, 
+        addDoc, 
+        query, 
+        where, 
+        orderBy, 
+        getDocs, 
+        deleteDoc, 
+        serverTimestamp,
+        ref, 
+        uploadBytes, 
+        getDownloadURL, 
+        deleteObject 
+    } from './firebase-config.js';
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const storage = getStorage(app);
-        const googleProvider = new GoogleAuthProvider();
+    // Import CryptoJS
+    import CryptoJS from 'https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js';
 
-        // App State
-        let currentUser = null;
-        let userData = null;
-        let isPremium = false;
+    // App State
+    let currentUser = null;
+    let userData = null;
+    let isPremium = false;
+    let inactivityTimer;
+    const INACTIVITY_TIMEOUT = 5 * 60 * 1000; // 5 minutes
 
-        // Initialize app
-        document.addEventListener('DOMContentLoaded', function() {
-            initApp();
+    // Initialize app
+    document.addEventListener('DOMContentLoaded', initApp);
+
+    async function initApp() {
+        console.log('Initializing SecureVault...');
+        
+        // Setup event listeners
+        document.getElementById('googleSignInBtn').addEventListener('click', signInWithGoogleHandler);
+        document.getElementById('logoutBtn').addEventListener('click', logoutHandler);
+        
+        // Check auth state
+        onAuthStateChanged(auth, async (user) => {
+            console.log('Auth state changed:', user ? 'User logged in' : 'No user');
+            if (user) {
+                currentUser = user;
+                await loadUserData();
+                showApp();
+                startInactivityTimer();
+                await checkPremiumStatus();
+            } else {
+                showAuth();
+            }
         });
 
-        async function initApp() {
-            console.log('Initializing SecureVault...');
-            
-            // Check auth state
-            onAuthStateChanged(auth, async (user) => {
-                console.log('Auth state changed:', user ? 'User logged in' : 'No user');
-                if (user) {
-                    currentUser = user;
-                    await loadUserData();
-                    showApp();
-                    await checkPremiumStatus();
-                } else {
-                    showAuth();
-                }
-            });
+        // Reset inactivity timer on user activity
+        document.addEventListener('mousemove', resetInactivityTimer);
+        document.addEventListener('keypress', resetInactivityTimer);
+        
+        // Setup enter key for forms
+        document.getElementById('loginPassword')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') loginWithEmail();
+        });
+        
+        document.getElementById('confirmPassword')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') signupWithEmail();
+        });
+    }
 
-            // Set up enter key for forms
-            setupFormListeners();
+    // Show/Hide forms
+    function showAuthForm(formType) {
+        console.log('Showing form:', formType);
+        
+        // Hide all forms
+        document.getElementById('loginForm').classList.remove('active');
+        document.getElementById('signupForm').classList.remove('active');
+        document.getElementById('forgotPasswordForm').classList.remove('active');
+        
+        // Remove active class from all tabs
+        document.querySelectorAll('.auth-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        
+        // Show selected form
+        const form = document.getElementById(`${formType}Form`);
+        if (form) {
+            form.classList.add('active');
         }
-
-        // Form Listeners
-        function setupFormListeners() {
-            // Login form enter key
-            document.getElementById('loginPassword')?.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') loginWithEmail();
-            });
-            
-            // Signup form enter key
-            document.getElementById('confirmPassword')?.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') signupWithEmail();
-            });
-            
-            // Reset form enter key
-            document.getElementById('resetEmail')?.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') resetPassword();
-            });
+        
+        // Activate corresponding tab
+        if (formType === 'login' || formType === 'signup') {
+            const tab = document.querySelector(`.auth-tab[onclick="showAuthForm('${formType}')"]`);
+            if (tab) tab.classList.add('active');
         }
+        
+        // Clear messages
+        clearError();
+    }
 
-        // Show/Hide forms
-        function showAuthForm(formType) {
-            console.log('Showing form:', formType);
-            
-            // Hide all forms
-            document.getElementById('loginForm').classList.remove('active');
-            document.getElementById('signupForm').classList.remove('active');
-            document.getElementById('forgotPasswordForm').classList.remove('active');
-            
-            // Remove active class from all tabs
-            document.querySelectorAll('.auth-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Show selected form
-            document.getElementById(`${formType}Form`).classList.add('active');
-            
-            // Activate corresponding tab
-            if (formType === 'login' || formType === 'signup') {
-                document.querySelector(`.auth-tab[onclick="showAuthForm('${formType}')"]`).classList.add('active');
-            }
-            
-            // Clear messages
-            clearMessages();
+    function showForgotPassword() {
+        showAuthForm('forgotPassword');
+    }
+
+    // Toggle password visibility
+    function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+        
+        const button = input.nextElementSibling;
+        const icon = button.querySelector('i');
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
         }
+    }
 
-        function showForgotPassword() {
-            showAuthForm('forgotPassword');
-        }
-
-        // Toggle password visibility
-        function togglePassword(inputId) {
-            const input = document.getElementById(inputId);
-            const icon = input.nextElementSibling.querySelector('i');
-            
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                input.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        }
-
-        // Message handling
-        function showError(message) {
-            const errorElement = document.getElementById('errorMessage');
+    // Error handling
+    function showError(message) {
+        const errorElement = document.getElementById('errorMessage');
+        if (errorElement) {
             errorElement.textContent = message;
-            errorElement.classList.add('show');
+            errorElement.style.display = 'block';
             console.error('Error:', message);
         }
+    }
 
-        function showSuccess(message) {
-            const successElement = document.getElementById('successMessage');
-            successElement.textContent = message;
-            successElement.classList.add('show');
-            console.log('Success:', message);
+    function clearError() {
+        const errorElement = document.getElementById('errorMessage');
+        if (errorElement) {
+            errorElement.textContent = '';
+            errorElement.style.display = 'none';
         }
+    }
 
-        function clearMessages() {
-            document.getElementById('errorMessage').classList.remove('show');
-            document.getElementById('successMessage').classList.remove('show');
+    // Email/Password Login
+    async function loginWithEmail() {
+        const email = document.getElementById('loginEmail')?.value.trim();
+        const password = document.getElementById('loginPassword')?.value;
+        
+        if (!email || !password) {
+            showError('Please enter both email and password');
+            return;
         }
-
-        // Loading state
-        function setLoading(buttonId, isLoading) {
-            const button = document.getElementById(buttonId);
-            if (!button) return;
+        
+        if (!validateEmail(email)) {
+            showError('Please enter a valid email address');
+            return;
+        }
+        
+        try {
+            console.log('Attempting login with email:', email);
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            console.log('Login successful:', userCredential.user.email);
+        } catch (error) {
+            console.error('Login error:', error.code, error.message);
             
-            if (isLoading) {
-                button.innerHTML = '<div class="spinner"></div> Loading...';
-                button.disabled = true;
-            } else {
-                button.innerHTML = buttonId === 'loginBtn' ? 
-                    '<i class="fas fa-sign-in-alt"></i> Login' : 
-                    buttonId === 'signupBtn' ? 
-                    '<i class="fas fa-user-plus"></i> Create Account' :
-                    '<i class="fas fa-key"></i> Reset Password';
-                button.disabled = false;
+            switch (error.code) {
+                case 'auth/invalid-credential':
+                case 'auth/wrong-password':
+                    showError('Invalid email or password');
+                    break;
+                case 'auth/user-not-found':
+                    showError('No account found with this email');
+                    break;
+                case 'auth/user-disabled':
+                    showError('This account has been disabled');
+                    break;
+                case 'auth/too-many-requests':
+                    showError('Too many failed attempts. Please try again later');
+                    break;
+                default:
+                    showError('Login failed: ' + error.message);
             }
         }
+    }
 
-        // Email validation
-        function validateEmail(email) {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return re.test(email);
+    // Email/Password Signup
+    async function signupWithEmail() {
+        const name = document.getElementById('signupName')?.value.trim();
+        const email = document.getElementById('signupEmail')?.value.trim();
+        const password = document.getElementById('signupPassword')?.value;
+        const confirmPassword = document.getElementById('confirmPassword')?.value;
+        
+        if (!name || !email || !password || !confirmPassword) {
+            showError('Please fill in all fields');
+            return;
         }
-
-        // Email/Password Login
-        async function loginWithEmail() {
-            console.log('Login attempt...');
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value;
+        
+        if (!validateEmail(email)) {
+            showError('Please enter a valid email address');
+            return;
+        }
+        
+        if (password.length < 6) {
+            showError('Password must be at least 6 characters long');
+            return;
+        }
+        
+        if (password !== confirmPassword) {
+            showError('Passwords do not match');
+            return;
+        }
+        
+        try {
+            // Create user with email and password
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            console.log('User created:', user.email);
             
-            if (!email || !password) {
-                showError('Please enter both email and password');
-                return;
-            }
+            // Update user profile with name
+            await user.updateProfile({
+                displayName: name
+            });
             
-            if (!validateEmail(email)) {
-                showError('Please enter a valid email address');
-                return;
-            }
-            
-            setLoading('loginBtn', true);
-            
-            try {
-                console.log('Attempting Firebase login...');
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                console.log('Login successful:', userCredential.user);
-                // onAuthStateChanged will handle the rest
-            } catch (error) {
-                console.error('Login error:', error.code, error.message);
-                
-                switch (error.code) {
-                    case 'auth/invalid-credential':
-                    case 'auth/wrong-password':
-                        showError('Invalid email or password');
-                        break;
-                    case 'auth/user-not-found':
-                        showError('No account found with this email');
-                        break;
-                    case 'auth/user-disabled':
-                        showError('This account has been disabled');
-                        break;
-                    case 'auth/too-many-requests':
-                        showError('Too many failed attempts. Please try again later');
-                        break;
-                    case 'auth/invalid-email':
-                        showError('Invalid email format');
-                        break;
-                    default:
-                        showError('Login failed: ' + error.message);
+            // Create user document in Firestore
+            await setDoc(doc(db, 'users', user.uid), {
+                email: email,
+                name: name,
+                photoURL: user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=667eea&color=fff`,
+                createdAt: serverTimestamp(),
+                isPremium: false,
+                limits: {
+                    ids: 5,
+                    passwords: 15,
+                    notes: 10,
+                    documents: 5,
+                    images: 5
+                },
+                usage: {
+                    ids: 0,
+                    passwords: 0,
+                    notes: 0,
+                    documents: 0,
+                    images: 0
                 }
-            } finally {
-                setLoading('loginBtn', false);
+            });
+            
+            alert('Account created successfully! You are now logged in.');
+            
+        } catch (error) {
+            console.error('Signup error:', error.code, error.message);
+            
+            switch (error.code) {
+                case 'auth/email-already-in-use':
+                    showError('An account with this email already exists');
+                    break;
+                case 'auth/invalid-email':
+                    showError('Invalid email address');
+                    break;
+                case 'auth/weak-password':
+                    showError('Password is too weak. Please use a stronger password');
+                    break;
+                case 'auth/operation-not-allowed':
+                    showError('Email/password accounts are not enabled');
+                    break;
+                default:
+                    showError('Signup failed: ' + error.message);
             }
         }
+    }
 
-        // Email/Password Signup
-        async function signupWithEmail() {
-            console.log('Signup attempt...');
-            const name = document.getElementById('signupName').value.trim();
-            const email = document.getElementById('signupEmail').value.trim();
-            const password = document.getElementById('signupPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
+    // Reset Password
+    async function resetPassword() {
+        const email = document.getElementById('resetEmail')?.value.trim();
+        
+        if (!email || !validateEmail(email)) {
+            showError('Please enter a valid email address');
+            return;
+        }
+        
+        try {
+            await sendPasswordResetEmail(auth, email);
+            showError('Password reset email sent! Check your inbox.');
             
-            // Validation
-            if (!name || !email || !password || !confirmPassword) {
-                showError('Please fill in all fields');
-                return;
+            // Clear form and return to login
+            document.getElementById('resetEmail').value = '';
+            setTimeout(() => {
+                showAuthForm('login');
+            }, 3000);
+            
+        } catch (error) {
+            console.error('Reset password error:', error.code, error.message);
+            
+            switch (error.code) {
+                case 'auth/user-not-found':
+                    showError('No account found with this email');
+                    break;
+                case 'auth/invalid-email':
+                    showError('Invalid email address');
+                    break;
+                default:
+                    showError('Failed to send reset email: ' + error.message);
             }
+        }
+    }
+
+    // Google Sign In
+    async function signInWithGoogleHandler() {
+        try {
+            const result = await signInWithPopup(auth, googleProvider);
+            const user = result.user;
+            console.log('Google sign-in successful:', user.email);
             
-            if (!validateEmail(email)) {
-                showError('Please enter a valid email address');
-                return;
-            }
+            // Check if user document exists
+            const userDocRef = doc(db, 'users', user.uid);
+            const userDoc = await getDoc(userDocRef);
             
-            if (password.length < 6) {
-                showError('Password must be at least 6 characters long');
-                return;
-            }
-            
-            if (password !== confirmPassword) {
-                showError('Passwords do not match');
-                return;
-            }
-            
-            setLoading('signupBtn', true);
-            
-            try {
-                console.log('Creating Firebase user...');
-                // Create user with email and password
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-                console.log('User created:', user);
-                
-                // Update user profile with name
-                await user.updateProfile({
-                    displayName: name
-                });
-                
-                // Create user document in Firestore
-                await setDoc(doc(db, 'users', user.uid), {
-                    email: email,
-                    name: name,
-                    photoURL: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=667eea&color=fff`,
+            if (!userDoc.exists()) {
+                // Create new user document for Google user
+                await setDoc(userDocRef, {
+                    email: user.email,
+                    name: user.displayName,
+                    photoURL: user.photoURL,
                     createdAt: serverTimestamp(),
                     isPremium: false,
                     limits: {
@@ -929,426 +969,299 @@
                         images: 0
                     }
                 });
-                
-                console.log('User document created');
-                showSuccess('Account created successfully!');
-                
-                // Clear form
-                document.getElementById('signupName').value = '';
-                document.getElementById('signupEmail').value = '';
-                document.getElementById('signupPassword').value = '';
-                document.getElementById('confirmPassword').value = '';
-                
-                // Auto-login after successful signup
-                setTimeout(() => {
-                    loginWithEmail();
-                }, 2000);
-                
-            } catch (error) {
-                console.error('Signup error:', error.code, error.message);
-                
-                switch (error.code) {
-                    case 'auth/email-already-in-use':
-                        showError('An account with this email already exists');
-                        break;
-                    case 'auth/invalid-email':
-                        showError('Invalid email address');
-                        break;
-                    case 'auth/weak-password':
-                        showError('Password is too weak. Please use a stronger password');
-                        break;
-                    case 'auth/operation-not-allowed':
-                        showError('Email/password accounts are not enabled. Please contact support');
-                        break;
-                    default:
-                        showError('Signup failed: ' + error.message);
-                }
-            } finally {
-                setLoading('signupBtn', false);
-            }
-        }
-
-        // Reset Password
-        async function resetPassword() {
-            console.log('Reset password attempt...');
-            const email = document.getElementById('resetEmail').value.trim();
-            
-            if (!email || !validateEmail(email)) {
-                showError('Please enter a valid email address');
-                return;
             }
             
-            setLoading('resetBtn', true);
+        } catch (error) {
+            console.error('Google sign-in error:', error.code, error.message);
             
-            try {
-                console.log('Sending password reset email...');
-                await sendPasswordResetEmail(auth, email);
-                showSuccess('Password reset email sent! Check your inbox.');
-                
-                // Clear form
-                document.getElementById('resetEmail').value = '';
-                
-                // Return to login after 3 seconds
-                setTimeout(() => {
-                    showAuthForm('login');
-                }, 3000);
-                
-            } catch (error) {
-                console.error('Reset password error:', error.code, error.message);
-                
-                switch (error.code) {
-                    case 'auth/user-not-found':
-                        showError('No account found with this email');
-                        break;
-                    case 'auth/invalid-email':
-                        showError('Invalid email address');
-                        break;
-                    case 'auth/too-many-requests':
-                        showError('Too many requests. Please try again later');
-                        break;
-                    default:
-                        showError('Failed to send reset email: ' + error.message);
-                }
-            } finally {
-                setLoading('resetBtn', false);
+            switch (error.code) {
+                case 'auth/popup-closed-by-user':
+                    // User closed the popup, no error needed
+                    break;
+                case 'auth/popup-blocked':
+                    showError('Popup was blocked. Please allow popups for this site.');
+                    break;
+                default:
+                    showError('Google sign-in failed: ' + error.message);
             }
         }
+    }
 
-        // Google Sign In
-        async function signInWithGoogle() {
-            console.log('Google sign-in attempt...');
-            try {
-                const result = await signInWithPopup(auth, googleProvider);
-                const user = result.user;
-                console.log('Google sign-in successful:', user);
-                
-                // Check if user document exists
-                const userDocRef = doc(db, 'users', user.uid);
-                const userDoc = await getDoc(userDocRef);
-                
-                if (!userDoc.exists()) {
-                    console.log('Creating user document for Google user...');
-                    // Create new user document for Google user
-                    await setDoc(userDocRef, {
-                        email: user.email,
-                        name: user.displayName,
-                        photoURL: user.photoURL,
-                        createdAt: serverTimestamp(),
-                        isPremium: false,
-                        limits: {
-                            ids: 5,
-                            passwords: 15,
-                            notes: 10,
-                            documents: 5,
-                            images: 5
-                        },
-                        usage: {
-                            ids: 0,
-                            passwords: 0,
-                            notes: 0,
-                            documents: 0,
-                            images: 0
-                        }
-                    });
-                }
-                
-                console.log('Google authentication complete');
-                // onAuthStateChanged will handle the rest
-                
-            } catch (error) {
-                console.error('Google sign-in error:', error.code, error.message);
-                
-                switch (error.code) {
-                    case 'auth/popup-closed-by-user':
-                        // User closed the popup, no error needed
-                        console.log('User closed Google popup');
-                        break;
-                    case 'auth/cancelled-popup-request':
-                        // Multiple popups opened, no error needed
-                        console.log('Google popup cancelled');
-                        break;
-                    case 'auth/popup-blocked':
-                        showError('Popup was blocked by browser. Please allow popups for this site.');
-                        break;
-                    default:
-                        showError('Google sign-in failed: ' + error.message);
-                }
-            }
-        }
+    // Email validation
+    function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
 
-        // Load user data
-        async function loadUserData() {
-            try {
-                console.log('Loading user data for:', currentUser.uid);
-                const userDocRef = doc(db, 'users', currentUser.uid);
-                const userDoc = await getDoc(userDocRef);
-                
-                if (userDoc.exists()) {
-                    userData = userDoc.data();
-                    console.log('User data loaded:', userData);
-                } else {
-                    console.log('Creating new user document...');
-                    // Create new user document if it doesn't exist
-                    userData = {
-                        email: currentUser.email,
-                        name: currentUser.displayName || currentUser.email.split('@')[0],
-                        photoURL: currentUser.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.email)}&background=667eea&color=fff`,
-                        createdAt: serverTimestamp(),
-                        isPremium: false,
-                        limits: {
-                            ids: 5,
-                            passwords: 15,
-                            notes: 10,
-                            documents: 5,
-                            images: 5
-                        },
-                        usage: {
-                            ids: 0,
-                            passwords: 0,
-                            notes: 0,
-                            documents: 0,
-                            images: 0
-                        }
-                    };
-                    
-                    await setDoc(userDocRef, userData);
-                }
-                
+    // Load user data from Firestore
+    async function loadUserData() {
+        try {
+            const userDocRef = doc(db, 'users', currentUser.uid);
+            const userDoc = await getDoc(userDocRef);
+            
+            if (userDoc.exists()) {
+                userData = userDoc.data();
                 updateUI();
+            } else {
+                // Create new user document if it doesn't exist
+                userData = {
+                    email: currentUser.email,
+                    name: currentUser.displayName || currentUser.email.split('@')[0],
+                    photoURL: currentUser.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.email)}&background=667eea&color=fff`,
+                    createdAt: serverTimestamp(),
+                    isPremium: false,
+                    limits: {
+                        ids: 5,
+                        passwords: 15,
+                        notes: 10,
+                        documents: 5,
+                        images: 5
+                    },
+                    usage: {
+                        ids: 0,
+                        passwords: 0,
+                        notes: 0,
+                        documents: 0,
+                        images: 0
+                    }
+                };
                 
-            } catch (error) {
-                console.error('Error loading user data:', error);
-                showError('Failed to load user data');
+                await setDoc(userDocRef, userData);
             }
-        }
-
-        // Update UI
-        function updateUI() {
-            console.log('Updating UI...');
-            document.getElementById('userName').textContent = userData.name || currentUser.email;
             
-            // Set user avatar
-            const avatarElement = document.getElementById('userAvatar');
+        } catch (error) {
+            console.error('Error loading user data:', error);
+            showError('Failed to load user data');
+        }
+    }
+
+    // Show/Hide screens
+    function showApp() {
+        document.getElementById('authScreen').style.display = 'none';
+        document.getElementById('appContainer').style.display = 'block';
+        showTab('dashboard');
+    }
+
+    function showAuth() {
+        document.getElementById('authScreen').style.display = 'flex';
+        document.getElementById('appContainer').style.display = 'none';
+        showAuthForm('login');
+        clearError();
+    }
+
+    function updateUI() {
+        const userNameElement = document.getElementById('userName');
+        const userAvatarElement = document.getElementById('userAvatar');
+        const userStatusElement = document.getElementById('userStatus');
+        
+        if (userNameElement) {
+            userNameElement.textContent = userData.name || currentUser.email;
+        }
+        
+        if (userAvatarElement) {
             if (userData.photoURL) {
-                avatarElement.innerHTML = `<img src="${userData.photoURL}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+                userAvatarElement.innerHTML = `<img src="${userData.photoURL}" style="width: 100%; height: 100%; border-radius: 50%;">`;
             } else {
                 const initials = (userData.name || currentUser.email).charAt(0).toUpperCase();
-                avatarElement.textContent = initials;
+                userAvatarElement.textContent = initials;
             }
-            
-            // Set status
-            const statusElement = document.getElementById('userStatus');
+        }
+        
+        if (userStatusElement) {
             if (userData.isPremium) {
-                statusElement.innerHTML = '<span class="premium-badge">PREMIUM</span>';
+                userStatusElement.innerHTML = '<span class="premium-badge">PREMIUM</span>';
                 isPremium = true;
             } else {
-                statusElement.textContent = 'Free User';
+                userStatusElement.textContent = 'Free User';
                 isPremium = false;
             }
         }
+    }
 
-        // Check premium status
-        async function checkPremiumStatus() {
-            try {
-                const premiumDocRef = doc(db, 'premium', currentUser.uid);
-                const premiumDoc = await getDoc(premiumDocRef);
+    // Tab Navigation
+    function showTab(tabName) {
+        // Update active tab
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        event.target.classList.add('active');
+        
+        // Load tab content
+        switch(tabName) {
+            case 'dashboard':
+                loadDashboardTab();
+                break;
+            case 'ids':
+                loadIDsTab();
+                break;
+            case 'passwords':
+                loadPasswordsTab();
+                break;
+            case 'notes':
+                loadNotesTab();
+                break;
+            case 'documents':
+                loadDocumentsTab();
+                break;
+            case 'backup':
+                loadBackupTab();
+                break;
+            case 'premium':
+                loadPremiumTab();
+                break;
+        }
+    }
+
+    // Home Button Function
+    function goToHome() {
+        window.location.href = "index.html";
+    }
+
+    // Logout Handler
+    async function logoutHandler() {
+        try {
+            await signOut(auth);
+        } catch (error) {
+            console.error('Error signing out:', error);
+            showError('Failed to logout');
+        }
+    }
+
+    // Inactivity Timer
+    function startInactivityTimer() {
+        clearTimeout(inactivityTimer);
+        inactivityTimer = setTimeout(() => {
+            alert('Session expired due to inactivity');
+            logoutHandler();
+        }, INACTIVITY_TIMEOUT);
+    }
+
+    function resetInactivityTimer() {
+        startInactivityTimer();
+    }
+
+    // Dashboard Tab
+    async function loadDashboardTab() {
+        const usage = userData.usage || {};
+        const limits = userData.limits || {};
+        
+        const content = `
+            <div class="card">
+                <h3><i class="fas fa-tachometer-alt"></i> Dashboard Overview</h3>
+                <p>Welcome back, ${userData.name || 'User'}!</p>
                 
-                if (premiumDoc.exists()) {
-                    const premiumData = premiumDoc.data();
-                    const expiryDate = new Date(premiumData.expiryDate);
-                    
-                    if (expiryDate > new Date()) {
-                        isPremium = true;
-                        userData.isPremium = true;
-                        await updateDoc(doc(db, 'users', currentUser.uid), {
-                            isPremium: true,
-                            premiumPlan: premiumData.plan,
-                            premiumExpiry: expiryDate.toLocaleDateString()
-                        });
-                        updateUI();
-                    } else {
-                        // Premium expired
-                        await updateDoc(doc(db, 'users', currentUser.uid), {
-                            isPremium: false
-                        });
-                        await deleteDoc(premiumDocRef);
-                        isPremium = false;
-                        userData.isPremium = false;
-                        updateUI();
-                    }
-                }
-            } catch (error) {
-                console.error('Error checking premium status:', error);
-            }
-        }
-
-        // Show/Hide screens
-        function showApp() {
-            console.log('Showing app...');
-            document.getElementById('authScreen').style.display = 'none';
-            document.getElementById('appContainer').style.display = 'block';
-            showTab('dashboard');
-        }
-
-        function showAuth() {
-            console.log('Showing auth screen...');
-            document.getElementById('authScreen').style.display = 'block';
-            document.getElementById('appContainer').style.display = 'none';
-            clearMessages();
-            showAuthForm('login');
-        }
-
-        // Logout
-        async function logout() {
-            console.log('Logging out...');
-            try {
-                await signOut(auth);
-                showAuth();
-            } catch (error) {
-                console.error('Error signing out:', error);
-                showError('Failed to logout');
-            }
-        }
-
-        // Home button
-        function goToHome() {
-            window.location.href = "index.html";
-        }
-
-        // Tab navigation
-        function showTab(tabName) {
-            console.log('Showing tab:', tabName);
-            
-            // Update active tab
-            document.querySelectorAll('.nav-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            // Load tab content
-            switch(tabName) {
-                case 'dashboard':
-                    loadDashboardTab();
-                    break;
-                case 'ids':
-                    loadIDsTab();
-                    break;
-                case 'passwords':
-                    loadPasswordsTab();
-                    break;
-                case 'notes':
-                    loadNotesTab();
-                    break;
-                case 'documents':
-                    loadDocumentsTab();
-                    break;
-                case 'backup':
-                    loadBackupTab();
-                    break;
-                case 'premium':
-                    loadPremiumTab();
-                    break;
-            }
-        }
-
-        // Dashboard Tab
-        function loadDashboardTab() {
-            const usage = userData.usage || {};
-            const limits = userData.limits || {};
-            
-            const content = `
-                <div class="card">
-                    <h3><i class="fas fa-tachometer-alt"></i> Dashboard Overview</h3>
-                    <p>Welcome back, ${userData.name || 'User'}!</p>
-                    
-                    ${isPremium ? `
-                        <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 15px; border-radius: 10px; color: white; margin: 15px 0;">
-                            <h4><i class="fas fa-crown"></i> Premium Status: Active</h4>
-                            <p>Unlimited storage • Auto Backup • Multi-device Sync</p>
-                        </div>
-                    ` : ''}
-                    
-                    <div style="margin-top: 20px;">
-                        <h4>Storage Usage</h4>
-                        ${Object.keys(usage).map(item => {
-                            const used = usage[item] || 0;
-                            const limit = isPremium ? '∞' : (limits[item] || 0);
-                            const percent = isPremium ? 0 : Math.min((used / limits[item]) * 100, 100);
-                            return `
-                                <div style="margin: 15px 0;">
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span>${item.charAt(0).toUpperCase() + item.slice(1)}</span>
-                                        <span>${used} / ${limit}</span>
-                                    </div>
-                                    ${!isPremium ? `
-                                        <div style="width: 100%; height: 10px; background: #e9ecef; border-radius: 5px; overflow: hidden; margin-top: 5px;">
-                                            <div style="height: 100%; background: #28a745; width: ${percent}%; transition: width 0.3s;"></div>
-                                        </div>
-                                    ` : ''}
-                                </div>
-                            `;
-                        }).join('')}
+                ${isPremium ? `
+                    <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 15px; border-radius: 10px; color: white; margin: 15px 0;">
+                        <h4><i class="fas fa-crown"></i> Premium Status: Active</h4>
+                        <p>Unlimited storage • Auto Backup • Multi-device Sync</p>
                     </div>
+                ` : ''}
+                
+                <div style="margin-top: 20px;">
+                    <h4>Storage Usage</h4>
+                    ${Object.keys(usage).map(item => {
+                        const used = usage[item] || 0;
+                        const limit = isPremium ? '∞' : (limits[item] || 0);
+                        const percent = isPremium ? 0 : Math.min((used / limits[item]) * 100, 100);
+                        return `
+                            <div style="margin: 15px 0;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>${item.charAt(0).toUpperCase() + item.slice(1)}</span>
+                                    <span>${used} / ${limit}</span>
+                                </div>
+                                ${!isPremium ? `
+                                    <div style="width: 100%; height: 10px; background: #e9ecef; border-radius: 5px; overflow: hidden; margin-top: 5px;">
+                                        <div style="height: 100%; background: #28a745; width: ${percent}%;"></div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    }).join('')}
                 </div>
-            `;
+            </div>
+        `;
+        
+        document.getElementById('contentArea').innerHTML = content;
+    }
+
+    // Other tabs (simplified for now)
+    function loadIDsTab() {
+        document.getElementById('contentArea').innerHTML = `
+            <div class="card">
+                <h3><i class="fas fa-id-card"></i> ID Management</h3>
+                <p>Store your IDs securely</p>
+            </div>
+        `;
+    }
+
+    function loadPasswordsTab() {
+        document.getElementById('contentArea').innerHTML = `
+            <div class="card">
+                <h3><i class="fas fa-key"></i> Password Manager</h3>
+                <p>Store your passwords securely</p>
+            </div>
+        `;
+    }
+
+    function loadNotesTab() {
+        document.getElementById('contentArea').innerHTML = `
+            <div class="card">
+                <h3><i class="fas fa-sticky-note"></i> Secure Notes</h3>
+                <p>Store your notes securely</p>
+            </div>
+        `;
+    }
+
+    function loadDocumentsTab() {
+        document.getElementById('contentArea').innerHTML = `
+            <div class="card">
+                <h3><i class="fas fa-folder"></i> Document Storage</h3>
+                <p>Store your documents securely</p>
+            </div>
+        `;
+    }
+
+    function loadBackupTab() {
+        document.getElementById('contentArea').innerHTML = `
+            <div class="card">
+                <h3><i class="fas fa-cloud-upload-alt"></i> Backup & Restore</h3>
+                <p>Backup and restore your data</p>
+            </div>
+        `;
+    }
+
+    function loadPremiumTab() {
+        document.getElementById('contentArea').innerHTML = `
+            <div class="card">
+                <h3><i class="fas fa-crown"></i> Premium Features</h3>
+                <p>Upgrade to premium for unlimited storage</p>
+            </div>
+        `;
+    }
+
+    // Check premium status
+    async function checkPremiumStatus() {
+        try {
+            const premiumDocRef = doc(db, 'premium', currentUser.uid);
+            const premiumDoc = await getDoc(premiumDocRef);
             
-            document.getElementById('contentArea').innerHTML = content;
+            if (premiumDoc.exists()) {
+                const premiumData = premiumDoc.data();
+                const expiryDate = new Date(premiumData.expiryDate);
+                
+                if (expiryDate > new Date()) {
+                    isPremium = true;
+                    userData.isPremium = true;
+                    await updateDoc(doc(db, 'users', currentUser.uid), {
+                        isPremium: true
+                    });
+                    updateUI();
+                }
+            }
+        } catch (error) {
+            console.error('Error checking premium status:', error);
         }
-
-        // Load other tabs (simplified for now)
-        function loadIDsTab() {
-            document.getElementById('contentArea').innerHTML = `
-                <div class="card">
-                    <h3><i class="fas fa-id-card"></i> ID Management</h3>
-                    <p>Coming soon...</p>
-                </div>
-            `;
-        }
-
-        function loadPasswordsTab() {
-            document.getElementById('contentArea').innerHTML = `
-                <div class="card">
-                    <h3><i class="fas fa-key"></i> Password Manager</h3>
-                    <p>Coming soon...</p>
-                </div>
-            `;
-        }
-
-        function loadNotesTab() {
-            document.getElementById('contentArea').innerHTML = `
-                <div class="card">
-                    <h3><i class="fas fa-sticky-note"></i> Secure Notes</h3>
-                    <p>Coming soon...</p>
-                </div>
-            `;
-        }
-
-        function loadDocumentsTab() {
-            document.getElementById('contentArea').innerHTML = `
-                <div class="card">
-                    <h3><i class="fas fa-folder"></i> Document Storage</h3>
-                    <p>Coming soon...</p>
-                </div>
-            `;
-        }
-
-        function loadBackupTab() {
-            document.getElementById('contentArea').innerHTML = `
-                <div class="card">
-                    <h3><i class="fas fa-cloud-upload-alt"></i> Backup & Restore</h3>
-                    <p>Coming soon...</p>
-                </div>
-            `;
-        }
-
-        function loadPremiumTab() {
-            document.getElementById('contentArea').innerHTML = `
-                <div class="card">
-                    <h3><i class="fas fa-crown"></i> Premium Features</h3>
-                    <p>Coming soon...</p>
-                </div>
-            `;
-        }
-    </script>
+    }
+</script>
 </body>
 </html>
