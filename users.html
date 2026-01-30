@@ -6,7 +6,6 @@
     <title>SecureVault - User Panel</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* All CSS from previous users.html remains the same */
         * {
             margin: 0;
             padding: 0;
@@ -25,6 +24,7 @@
             padding: 20px;
         }
 
+        /* Authentication Screen */
         .auth-container {
             display: flex;
             justify-content: center;
@@ -44,35 +44,226 @@
         }
 
         .logo {
-            width: 100px;
-            margin-bottom: 20px;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 36px;
+            color: white;
         }
 
         h1 {
             color: #333;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
         }
 
-        .btn-google {
-            background: #4285F4;
-            color: white;
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        /* Tabs */
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            background: none;
             border: none;
-            padding: 12px 24px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .auth-tab.active {
+            color: #667eea;
+        }
+
+        .auth-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #667eea;
+        }
+
+        /* Form Styles */
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .password-input {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+        }
+
+        /* Button Styles */
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
             border-radius: 8px;
             font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            width: 100%;
-            transition: background 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+        }
+
+        .btn-google {
+            background: white;
+            color: #333;
+            border: 2px solid #ddd;
+            margin-top: 15px;
         }
 
         .btn-google:hover {
-            background: #357ae8;
+            background: #f8f9fa;
+            border-color: #ccc;
         }
 
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #eee;
+        }
+
+        .divider span {
+            padding: 0 15px;
+        }
+
+        /* Links */
+        .auth-links {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .auth-link {
+            color: #667eea;
+            text-decoration: none;
+            cursor: pointer;
+            display: block;
+            margin: 5px 0;
+        }
+
+        .auth-link:hover {
+            text-decoration: underline;
+        }
+
+        .back-home {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .back-home a {
+            color: #666;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .back-home a:hover {
+            color: #667eea;
+        }
+
+        /* Error Message */
+        .error-message {
+            background: #fee;
+            color: #dc3545;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: left;
+            font-size: 14px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Main Application (Existing Styles Remain) */
         .app-container {
             display: none;
             background: white;
@@ -101,6 +292,12 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
         }
 
         .nav-tabs {
@@ -143,24 +340,6 @@
             color: #333;
         }
 
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
         .btn {
             padding: 10px 20px;
             border: none;
@@ -187,22 +366,6 @@
         .btn-danger {
             background: #dc3545;
             color: white;
-        }
-
-        .item-list {
-            list-style: none;
-            margin-top: 10px;
-        }
-
-        .item-list li {
-            padding: 10px;
-            background: white;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            border: 1px solid #dee2e6;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
         .premium-badge {
@@ -239,43 +402,7 @@
             }
         }
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            max-width: 400px;
-            width: 90%;
-        }
-
-        .pin-input {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin: 20px 0;
-        }
-
-        .pin-input input {
-            width: 40px;
-            height: 40px;
-            text-align: center;
-            font-size: 20px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-        }
-
+        /* Progress and Upload Styles */
         .progress-bar {
             width: 100%;
             height: 20px;
@@ -315,6 +442,28 @@
             border-radius: 5px;
             border: 1px solid #dee2e6;
         }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 90%;
+        }
     </style>
 </head>
 <body>
@@ -323,11 +472,114 @@
         <div class="auth-box">
             <div class="logo">🔐</div>
             <h1>SecureVault</h1>
-            <p style="margin-bottom: 30px; color: #666;">Your secure digital vault</p>
-            <button class="btn-google" id="googleSignInBtn">
-                <i class="fab fa-google"></i> Sign in with Google
+            <p class="subtitle">Your secure digital vault</p>
+            
+            <!-- Tabs -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="showAuthForm('login')">Login</button>
+                <button class="auth-tab" onclick="showAuthForm('signup')">Sign Up</button>
+            </div>
+            
+            <!-- Error Message -->
+            <div class="error-message" id="errorMessage"></div>
+            
+            <!-- Login Form -->
+            <div id="loginForm" class="auth-form active">
+                <div class="form-group">
+                    <label for="loginEmail">Email Address</label>
+                    <input type="email" class="form-control" id="loginEmail" placeholder="Enter your email">
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <div class="password-input">
+                        <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password">
+                        <button class="toggle-password" type="button" onclick="togglePassword('loginPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <a href="#" class="auth-link" onclick="showForgotPassword()">Forgot Password?</a>
+                </div>
+                
+                <button class="btn btn-primary" onclick="loginWithEmail()">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </div>
+            
+            <!-- Signup Form -->
+            <div id="signupForm" class="auth-form">
+                <div class="form-group">
+                    <label for="signupName">Full Name</label>
+                    <input type="text" class="form-control" id="signupName" placeholder="Enter your full name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="signupEmail">Email Address</label>
+                    <input type="email" class="form-control" id="signupEmail" placeholder="Enter your email">
+                </div>
+                
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <div class="password-input">
+                        <input type="password" class="form-control" id="signupPassword" placeholder="Create a password">
+                        <button class="toggle-password" type="button" onclick="togglePassword('signupPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <div class="password-input">
+                        <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm your password">
+                        <button class="toggle-password" type="button" onclick="togglePassword('confirmPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" onclick="signupWithEmail()">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </div>
+            
+            <!-- Forgot Password Form -->
+            <div id="forgotPasswordForm" class="auth-form">
+                <div class="form-group">
+                    <label for="resetEmail">Email Address</label>
+                    <input type="email" class="form-control" id="resetEmail" placeholder="Enter your email">
+                </div>
+                
+                <div class="form-group">
+                    <button class="btn btn-primary" onclick="resetPassword()">
+                        <i class="fas fa-key"></i> Reset Password
+                    </button>
+                </div>
+                
+                <div class="form-group">
+                    <a href="#" class="auth-link" onclick="showAuthForm('login')">Back to Login</a>
+                </div>
+            </div>
+            
+            <!-- Google Sign-in Divider -->
+            <div class="divider">
+                <span>Or continue with</span>
+            </div>
+            
+            <!-- Google Sign-in Button -->
+            <button class="btn btn-google" onclick="signInWithGoogle()">
+                <i class="fab fa-google"></i> Google
             </button>
-            <div id="errorMessage" style="color: #dc3545; margin-top: 15px;"></div>
+            
+            <!-- Back to Home -->
+            <div class="back-home">
+                <a href="index.html">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+            </div>
         </div>
     </div>
 
@@ -338,21 +590,21 @@
             <div class="header">
                 <h2><i class="fas fa-shield-alt"></i> SecureVault</h2>
                 <div class="user-info">
-                    <img id="userAvatar" class="user-avatar" src="" alt="Avatar">
+                    <div class="user-avatar" id="userAvatar">
+                        <!-- Initial will be set by JavaScript -->
+                    </div>
                     <div>
                         <div id="userName"></div>
                         <div id="userStatus" style="font-size: 12px;"></div>
                     </div>
+                    <!-- Home Button -->
+                    <button class="btn" onclick="goToHome()" style="margin-right: 10px;">
+                        <i class="fas fa-home"></i> Home
+                    </button>
                     <button class="btn btn-danger" id="logoutBtn">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </button>
-                
-                <!-- Add this button to users.html header -->
-<button class="btn" onclick="goToHome()" style="margin-right: 10px;">
-    <i class="fas fa-home"></i> Home
-</button>
-
-            </div>
+                </div>
             </div>
 
             <!-- Navigation -->
@@ -373,41 +625,21 @@
         </div>
     </div>
 
-    <!-- PIN Modal -->
-    <div class="modal" id="pinModal">
-        <div class="modal-content">
-            <h3>Enter Security PIN</h3>
-            <p style="color: #666; margin-bottom: 20px;">Enter your 6-digit PIN for extra security</p>
-            <div class="pin-input">
-                <input type="password" maxlength="1" oninput="moveToNext(this, 1)">
-                <input type="password" maxlength="1" oninput="moveToNext(this, 2)">
-                <input type="password" maxlength="1" oninput="moveToNext(this, 3)">
-                <input type="password" maxlength="1" oninput="moveToNext(this, 4)">
-                <input type="password" maxlength="1" oninput="moveToNext(this, 5)">
-                <input type="password" maxlength="1" oninput="moveToNext(this, 6)">
-            </div>
-            <button class="btn btn-primary" onclick="verifyPIN()">Verify</button>
-            <button class="btn" onclick="setupNewPIN()" style="margin-left: 10px;">Setup New PIN</button>
-        </div>
-    </div>
-
-    <!-- Image Preview Modal -->
-    <div class="modal" id="imageModal">
-        <div class="modal-content">
-            <h3>Image Preview</h3>
-            <img id="modalImage" style="width: 100%; max-height: 400px; object-fit: contain;">
-            <button class="btn btn-danger" onclick="closeImageModal()" style="margin-top: 20px;">Close</button>
-        </div>
-    </div>
-
     <!-- CryptoJS for encryption -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
     <script type="module">
         // Import Firebase modules
         import { 
-            auth, db, storage, googleProvider,
-            signInWithPopup, collection, doc, getDoc, 
+            auth, 
+            db, 
+            storage, 
+            googleProvider,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            signInWithPopup,
+            sendPasswordResetEmail,
+            collection, doc, getDoc, 
             setDoc, updateDoc, addDoc, query, where, 
             orderBy, getDocs, deleteDoc, serverTimestamp,
             ref, uploadBytes, getDownloadURL, deleteObject
@@ -428,7 +660,6 @@
 
         async function initApp() {
             // Setup event listeners
-            document.getElementById('googleSignInBtn').addEventListener('click', signInWithGoogleHandler);
             document.getElementById('logoutBtn').addEventListener('click', logoutHandler);
 
             // Check auth state
@@ -447,15 +678,306 @@
             // Reset inactivity timer on user activity
             document.addEventListener('mousemove', resetInactivityTimer);
             document.addEventListener('keypress', resetInactivityTimer);
+            
+            // Add enter key support for forms
+            document.getElementById('loginPassword')?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') loginWithEmail();
+            });
+            
+            document.getElementById('signupPassword')?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') signupWithEmail();
+            });
         }
 
-        // Google Sign In Handler
-        async function signInWithGoogleHandler() {
-            try {
-                await signInWithPopup(auth, googleProvider);
-            } catch (error) {
-                showError('Authentication failed: ' + error.message);
+        // Show/Hide authentication forms
+        function showAuthForm(formType) {
+            // Hide all forms
+            document.getElementById('loginForm').classList.remove('active');
+            document.getElementById('signupForm').classList.remove('active');
+            document.getElementById('forgotPasswordForm').classList.remove('active');
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.auth-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected form
+            document.getElementById(`${formType}Form`).classList.add('active');
+            
+            // Activate corresponding tab
+            if (formType === 'login' || formType === 'signup') {
+                document.querySelector(`.auth-tab[onclick="showAuthForm('${formType}')"]`).classList.add('active');
             }
+            
+            // Clear error message
+            clearError();
+        }
+
+        function showForgotPassword() {
+            showAuthForm('forgotPassword');
+        }
+
+        // Toggle password visibility
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.nextElementSibling.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Error handling
+        function showError(message) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = message;
+            errorElement.classList.add('show');
+        }
+
+        function clearError() {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = '';
+            errorElement.classList.remove('show');
+        }
+
+        // Email/Password Login
+        async function loginWithEmail() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            // Validation
+            if (!email || !password) {
+                showError('Please enter both email and password');
+                return;
+            }
+            
+            if (!validateEmail(email)) {
+                showError('Please enter a valid email address');
+                return;
+            }
+            
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                console.log('User logged in:', userCredential.user);
+                // onAuthStateChanged will handle the rest
+            } catch (error) {
+                console.error('Login error:', error);
+                
+                // User-friendly error messages
+                switch (error.code) {
+                    case 'auth/invalid-credential':
+                    case 'auth/wrong-password':
+                        showError('Invalid email or password');
+                        break;
+                    case 'auth/user-not-found':
+                        showError('No account found with this email');
+                        break;
+                    case 'auth/user-disabled':
+                        showError('This account has been disabled');
+                        break;
+                    case 'auth/too-many-requests':
+                        showError('Too many failed attempts. Please try again later');
+                        break;
+                    default:
+                        showError('Login failed: ' + error.message);
+                }
+            }
+        }
+
+        // Email/Password Signup
+        async function signupWithEmail() {
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Validation
+            if (!name || !email || !password || !confirmPassword) {
+                showError('Please fill in all fields');
+                return;
+            }
+            
+            if (!validateEmail(email)) {
+                showError('Please enter a valid email address');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showError('Password must be at least 6 characters long');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showError('Passwords do not match');
+                return;
+            }
+            
+            try {
+                // Create user with email and password
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                // Update user profile with name
+                await user.updateProfile({
+                    displayName: name
+                });
+                
+                // Create user document in Firestore
+                await setDoc(doc(db, 'users', user.uid), {
+                    email: email,
+                    name: name,
+                    photoURL: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=667eea&color=fff`,
+                    createdAt: serverTimestamp(),
+                    isPremium: false,
+                    limits: {
+                        ids: 5,
+                        passwords: 15,
+                        notes: 10,
+                        documents: 5,
+                        images: 5
+                    },
+                    usage: {
+                        ids: 0,
+                        passwords: 0,
+                        notes: 0,
+                        documents: 0,
+                        images: 0
+                    }
+                });
+                
+                console.log('User created:', user);
+                // onAuthStateChanged will handle the rest
+                
+            } catch (error) {
+                console.error('Signup error:', error);
+                
+                // User-friendly error messages
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        showError('An account with this email already exists');
+                        break;
+                    case 'auth/invalid-email':
+                        showError('Invalid email address');
+                        break;
+                    case 'auth/weak-password':
+                        showError('Password is too weak. Please use a stronger password');
+                        break;
+                    case 'auth/operation-not-allowed':
+                        showError('Email/password accounts are not enabled. Please contact support');
+                        break;
+                    default:
+                        showError('Signup failed: ' + error.message);
+                }
+            }
+        }
+
+        // Reset Password
+        async function resetPassword() {
+            const email = document.getElementById('resetEmail').value.trim();
+            
+            if (!email || !validateEmail(email)) {
+                showError('Please enter a valid email address');
+                return;
+            }
+            
+            try {
+                await sendPasswordResetEmail(auth, email);
+                showError('Password reset email sent! Check your inbox.');
+                
+                // Clear email field
+                document.getElementById('resetEmail').value = '';
+                
+                // Return to login after 3 seconds
+                setTimeout(() => {
+                    showAuthForm('login');
+                }, 3000);
+                
+            } catch (error) {
+                console.error('Reset password error:', error);
+                
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        showError('No account found with this email');
+                        break;
+                    case 'auth/invalid-email':
+                        showError('Invalid email address');
+                        break;
+                    case 'auth/too-many-requests':
+                        showError('Too many requests. Please try again later');
+                        break;
+                    default:
+                        showError('Failed to send reset email: ' + error.message);
+                }
+            }
+        }
+
+        // Google Sign In
+        async function signInWithGoogle() {
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+                const user = result.user;
+                
+                // Check if user document exists
+                const userDocRef = doc(db, 'users', user.uid);
+                const userDoc = await getDoc(userDocRef);
+                
+                if (!userDoc.exists()) {
+                    // Create new user document for Google user
+                    await setDoc(userDocRef, {
+                        email: user.email,
+                        name: user.displayName,
+                        photoURL: user.photoURL,
+                        createdAt: serverTimestamp(),
+                        isPremium: false,
+                        limits: {
+                            ids: 5,
+                            passwords: 15,
+                            notes: 10,
+                            documents: 5,
+                            images: 5
+                        },
+                        usage: {
+                            ids: 0,
+                            passwords: 0,
+                            notes: 0,
+                            documents: 0,
+                            images: 0
+                        }
+                    });
+                }
+                
+                console.log('Google user logged in:', user);
+                // onAuthStateChanged will handle the rest
+                
+            } catch (error) {
+                console.error('Google sign-in error:', error);
+                
+                switch (error.code) {
+                    case 'auth/popup-closed-by-user':
+                        // User closed the popup, no error needed
+                        break;
+                    case 'auth/cancelled-popup-request':
+                        // Multiple popups opened, no error needed
+                        break;
+                    case 'auth/popup-blocked':
+                        showError('Popup was blocked by browser. Please allow popups for this site.');
+                        break;
+                    default:
+                        showError('Google sign-in failed: ' + error.message);
+                }
+            }
+        }
+
+        // Email validation helper
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
         }
 
         // Load user data from Firestore
@@ -468,11 +990,11 @@
                     userData = userDoc.data();
                     updateUI();
                 } else {
-                    // Create new user document
+                    // Create new user document if it doesn't exist
                     userData = {
                         email: currentUser.email,
-                        name: currentUser.displayName,
-                        photoURL: currentUser.photoURL,
+                        name: currentUser.displayName || currentUser.email.split('@')[0],
+                        photoURL: currentUser.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.email)}&background=667eea&color=fff`,
                         createdAt: serverTimestamp(),
                         isPremium: false,
                         limits: {
@@ -494,13 +1016,6 @@
                     await setDoc(userDocRef, userData);
                 }
                 
-                // Check if PIN is set
-                const pinDocRef = doc(db, 'pins', currentUser.uid);
-                const pinDoc = await getDoc(pinDocRef);
-                if (!pinDoc.exists()) {
-                    showPINModal();
-                }
-                
             } catch (error) {
                 console.error('Error loading user data:', error);
                 showError('Failed to load user data');
@@ -517,12 +1032,31 @@
         function showAuth() {
             document.getElementById('authScreen').style.display = 'flex';
             document.getElementById('appContainer').style.display = 'none';
+            // Reset forms
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('signupName').value = '';
+            document.getElementById('signupEmail').value = '';
+            document.getElementById('signupPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+            document.getElementById('resetEmail').value = '';
+            clearError();
+            showAuthForm('login');
         }
 
         function updateUI() {
             document.getElementById('userName').textContent = userData.name || currentUser.email;
-            document.getElementById('userAvatar').src = userData.photoURL || 'https://via.placeholder.com/40';
             
+            // Set user avatar
+            const avatarElement = document.getElementById('userAvatar');
+            if (userData.photoURL) {
+                avatarElement.innerHTML = `<img src="${userData.photoURL}" style="width: 100%; height: 100%; border-radius: 50%;">`;
+            } else {
+                const initials = (userData.name || currentUser.email).charAt(0).toUpperCase();
+                avatarElement.textContent = initials;
+            }
+            
+            // Set status
             const statusElement = document.getElementById('userStatus');
             if (userData.isPremium) {
                 statusElement.innerHTML = '<span class="premium-badge">PREMIUM</span>';
@@ -542,8 +1076,6 @@
             event.target.classList.add('active');
             
             // Load tab content
-            const contentArea = document.getElementById('contentArea');
-            
             switch(tabName) {
                 case 'dashboard':
                     loadDashboardTab();
@@ -567,6 +1099,11 @@
                     loadPremiumTab();
                     break;
             }
+        }
+
+        // Home Button Function
+        function goToHome() {
+            window.location.href = "index.html";
         }
 
         // Dashboard Tab
@@ -887,334 +1424,6 @@
             }
         }
 
-        // Notes Tab
-        async function loadNotesTab() {
-            const content = `
-                <div class="card">
-                    <h3><i class="fas fa-sticky-note"></i> Secure Notes</h3>
-                    <p>Stored notes: ${userData.usage.notes || 0}/${isPremium ? 'Unlimited' : (userData.limits.notes || 10)}</p>
-                    
-                    <div class="form-group">
-                        <label>Note Title</label>
-                        <input type="text" class="form-control" id="noteTitle" placeholder="Enter title">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Note Content</label>
-                        <textarea class="form-control" id="noteContent" rows="4" placeholder="Enter your secure note"></textarea>
-                    </div>
-                    
-                    <button class="btn btn-primary" onclick="saveNote()">
-                        <i class="fas fa-save"></i> Save Note
-                    </button>
-                    
-                    <div id="notesList" class="item-list" style="margin-top: 20px;"></div>
-                </div>
-            `;
-            
-            document.getElementById('contentArea').innerHTML = content;
-            await loadNotesList();
-        }
-
-        // Documents Tab
-        async function loadDocumentsTab() {
-            const content = `
-                <div class="card">
-                    <h3><i class="fas fa-folder"></i> Document Storage</h3>
-                    <p>Stored documents: ${userData.usage.documents || 0}/${isPremium ? 'Unlimited' : (userData.limits.documents || 5)}</p>
-                    <p>Stored images: ${userData.usage.images || 0}/${isPremium ? 'Unlimited' : (userData.limits.images || 5)}</p>
-                    
-                    <div class="upload-area" id="uploadArea">
-                        <i class="fas fa-cloud-upload-alt" style="font-size: 48px; color: #667eea; margin-bottom: 15px;"></i>
-                        <p>Drag & drop files here or click to browse</p>
-                        <p style="color: #666; font-size: 14px;">
-                            ${isPremium ? 'Premium: up to 2MB per file' : 'Free: Images max 480p, compressed'}
-                        </p>
-                        <input type="file" id="fileInput" style="display: none;" multiple onchange="handleFileUpload(event)">
-                    </div>
-                    
-                    <div id="uploadProgress" style="display: none; margin-top: 20px;">
-                        <div class="progress-bar">
-                            <div class="progress" id="uploadProgressBar" style="width: 0%"></div>
-                        </div>
-                        <p id="uploadStatus" style="text-align: center; margin-top: 5px;"></p>
-                    </div>
-                    
-                    <div id="documentsList" style="margin-top: 20px;"></div>
-                </div>
-            `;
-            
-            document.getElementById('contentArea').innerHTML = content;
-            
-            // Setup upload area click
-            document.getElementById('uploadArea').addEventListener('click', () => {
-                document.getElementById('fileInput').click();
-            });
-            
-            await loadDocumentsList();
-        }
-
-        // Handle File Upload
-        async function handleFileUpload(event) {
-            const files = event.target.files;
-            if (!files.length) return;
-            
-            const uploadProgress = document.getElementById('uploadProgress');
-            const progressBar = document.getElementById('uploadProgressBar');
-            const statusText = document.getElementById('uploadStatus');
-            
-            uploadProgress.style.display = 'block';
-            
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                
-                // Check file type and size
-                const fileType = file.type;
-                const isImage = fileType.startsWith('image/');
-                const fileSizeMB = file.size / (1024 * 1024);
-                
-                if (isImage && !isPremium && fileSizeMB > 0.5) { // 500KB limit for free users
-                    alert('Free users can only upload images up to 500KB. Upgrade to Premium for larger files.');
-                    continue;
-                }
-                
-                if (!isPremium && fileSizeMB > 1) {
-                    alert('Free users can only upload files up to 1MB');
-                    continue;
-                }
-                
-                if (isPremium && fileSizeMB > 2) {
-                    alert('Premium users can upload files up to 2MB');
-                    continue;
-                }
-                
-                // Update progress
-                const progress = ((i + 1) / files.length) * 100;
-                progressBar.style.width = `${progress}%`;
-                statusText.textContent = `Uploading ${i + 1} of ${files.length}: ${file.name}`;
-                
-                try {
-                    // Upload to Firebase Storage
-                    const storageRef = ref(storage, `users/${currentUser.uid}/${Date.now()}_${file.name}`);
-                    await uploadBytes(storageRef, file);
-                    const downloadURL = await getDownloadURL(storageRef);
-                    
-                    // Save metadata to Firestore
-                    const fileData = {
-                        name: file.name,
-                        type: fileType,
-                        size: file.size,
-                        url: downloadURL,
-                        isImage: isImage,
-                        createdAt: new Date().toISOString()
-                    };
-                    
-                    await addDoc(collection(db, 'vaults', currentUser.uid, 'documents'), fileData);
-                    
-                    // Update usage
-                    const usageType = isImage ? 'images' : 'documents';
-                    await updateUsage(usageType, 1);
-                    
-                } catch (error) {
-                    console.error('Error uploading file:', error);
-                    alert(`Failed to upload ${file.name}: ${error.message}`);
-                }
-            }
-            
-            // Reset and reload
-            progressBar.style.width = '0%';
-            statusText.textContent = '';
-            uploadProgress.style.display = 'none';
-            event.target.value = '';
-            
-            await loadDocumentsList();
-            alert('Files uploaded successfully!');
-        }
-
-        // Load Documents List
-        async function loadDocumentsList() {
-            try {
-                const documentsQuery = query(
-                    collection(db, 'vaults', currentUser.uid, 'documents'),
-                    orderBy('createdAt', 'desc')
-                );
-                
-                const querySnapshot = await getDocs(documentsQuery);
-                const documentsList = document.getElementById('documentsList');
-                
-                if (!documentsList) return;
-                
-                if (querySnapshot.empty) {
-                    documentsList.innerHTML = '<p style="color: #666; text-align: center;">No documents uploaded yet</p>';
-                    return;
-                }
-                
-                documentsList.innerHTML = '';
-                
-                querySnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    const fileSizeKB = Math.round(data.size / 1024);
-                    
-                    const item = document.createElement('div');
-                    item.className = 'file-item';
-                    item.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            ${data.isImage ? 
-                                `<i class="fas fa-image" style="color: #4CAF50;"></i>` : 
-                                `<i class="fas fa-file" style="color: #2196F3;"></i>`}
-                            <div>
-                                <div>${data.name}</div>
-                                <small style="color: #666;">${fileSizeKB} KB • ${new Date(data.createdAt).toLocaleDateString()}</small>
-                            </div>
-                        </div>
-                        <div>
-                            ${data.isImage ? 
-                                `<button class="btn" onclick="previewImage('${data.url}')">
-                                    <i class="fas fa-eye"></i>
-                                </button>` : ''}
-                            <button class="btn" onclick="downloadFile('${data.url}', '${data.name}')">
-                                <i class="fas fa-download"></i>
-                            </button>
-                            <button class="btn btn-danger" onclick="deleteFile('${docSnap.id}', '${data.url}')">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    `;
-                    documentsList.appendChild(item);
-                });
-            } catch (error) {
-                console.error('Error loading documents:', error);
-                document.getElementById('documentsList').innerHTML = '<p style="color: #dc3545;">Error loading documents</p>';
-            }
-        }
-
-        // Backup Tab
-        function loadBackupTab() {
-            const content = `
-                <div class="card">
-                    <h3><i class="fas fa-cloud-upload-alt"></i> Backup & Restore</h3>
-                    
-                    ${isPremium ? `
-                        <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 15px; border-radius: 10px; color: white; margin-bottom: 20px;">
-                            <h4><i class="fas fa-sync"></i> Automatic Backup Enabled</h4>
-                            <p>Your data is automatically backed up to Google Drive</p>
-                        </div>
-                    ` : `
-                        <div style="background: #fff3cd; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-                            <h4><i class="fas fa-exclamation-triangle"></i> Manual Backup Only</h4>
-                            <p>Free users can manually backup text and compressed images only</p>
-                        </div>
-                    `}
-                    
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
-                        <button class="btn btn-primary" onclick="createBackup()">
-                            <i class="fas fa-download"></i> Create Backup
-                        </button>
-                        
-                        <button class="btn" onclick="restoreBackup()">
-                            <i class="fas fa-upload"></i> Restore from Backup
-                        </button>
-                        
-                        ${!isPremium ? `
-                            <button class="btn btn-success" onclick="showTab('premium')">
-                                <i class="fas fa-crown"></i> Upgrade for Auto Backup
-                            </button>
-                        ` : ''}
-                    </div>
-                    
-                    <div id="backupInfo" style="margin-top: 20px;">
-                        <h4>Backup Details</h4>
-                        <ul style="color: #666;">
-                            <li>Backup includes all IDs, passwords, notes, and document metadata</li>
-                            ${isPremium ? 
-                                '<li>Premium: Full quality images and automatic backup' : 
-                                '<li>Free: Compressed images only, manual backup required'}
-                            </li>
-                            <li>Backup files are encrypted client-side</li>
-                            <li>Last backup: <span id="lastBackupTime">Never</span></li>
-                        </ul>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('contentArea').innerHTML = content;
-        }
-
-        // Premium Tab
-        function loadPremiumTab() {
-            const content = `
-                <div class="card">
-                    <h3><i class="fas fa-crown"></i> Premium Features</h3>
-                    
-                    ${!isPremium ? `
-                        <div style="background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
-                            <h4 style="color: #333;">Upgrade to Premium!</h4>
-                            <p style="color: #333;">Unlock unlimited storage and advanced features</p>
-                        </div>
-                        
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-                            <div style="background: white; padding: 20px; border-radius: 10px; border: 2px solid #ddd;">
-                                <h4>Monthly Plan</h4>
-                                <h2>$4.99<span style="font-size: 14px; color: #666;">/month</span></h2>
-                                <ul style="margin: 15px 0; color: #666;">
-                                    <li>✓ Unlimited IDs, Passwords, Notes</li>
-                                    <li>✓ Unlimited document storage</li>
-                                    <li>✓ Images up to 2MB</li>
-                                    <li>✓ Automatic Google Drive backup</li>
-                                    <li>✓ Multi-device sync</li>
-                                </ul>
-                                <button class="btn btn-success" style="width: 100%;" onclick="upgradeToPremium('monthly')">
-                                    <i class="fas fa-credit-card"></i> Subscribe Monthly
-                                </button>
-                            </div>
-                            
-                            <div style="background: white; padding: 20px; border-radius: 10px; border: 2px solid #f6d365;">
-                                <div style="background: #f6d365; color: #333; padding: 5px 10px; border-radius: 20px; display: inline-block; margin-bottom: 10px;">
-                                    <small><strong>SAVE 15%</strong></small>
-                                </div>
-                                <h4>Yearly Plan</h4>
-                                <h2>$49.99<span style="font-size: 14px; color: #666;">/year</span></h2>
-                                <ul style="margin: 15px 0; color: #666;">
-                                    <li>✓ All monthly features</li>
-                                    <li>✓ Save 15% with yearly billing</li>
-                                    <li>✓ Priority support</li>
-                                    <li>✓ Early access to new features</li>
-                                </ul>
-                                <button class="btn btn-success" style="width: 100%; background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);" onclick="upgradeToPremium('yearly')">
-                                    <i class="fas fa-crown"></i> Subscribe Yearly
-                                </button>
-                            </div>
-                        </div>
-                    ` : `
-                        <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 20px; border-radius: 10px; color: white; margin-bottom: 20px; text-align: center;">
-                            <h4>🎉 You're a Premium Member!</h4>
-                            <p>Enjoy all premium features</p>
-                        </div>
-                        
-                        <div style="margin-top: 20px;">
-                            <h4>Active Premium Features:</h4>
-                            <ul style="margin: 15px 0; color: #666;">
-                                <li><i class="fas fa-check-circle" style="color: #28a745;"></i> Unlimited storage for all item types</li>
-                                <li><i class="fas fa-check-circle" style="color: #28a745;"></i> Automatic Google Drive backup</li>
-                                <li><i class="fas fa-check-circle" style="color: #28a745;"></i> Multi-device sync</li>
-                                <li><i class="fas fa-check-circle" style="color: #28a745;"></i> High-quality images (up to 2MB)</li>
-                                <li><i class="fas fa-check-circle" style="color: #28a745;"></i> Priority customer support</li>
-                            </ul>
-                            
-                            <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-top: 20px;">
-                                <h4>Subscription Details</h4>
-                                <p>Plan: ${userData.premiumPlan || 'Monthly'}</p>
-                                <p>Status: <span style="color: #28a745;">Active</span></p>
-                                ${userData.premiumExpiry ? `<p>Next billing: ${userData.premiumExpiry}</p>` : ''}
-                            </div>
-                        </div>
-                    `}
-                </div>
-            `;
-            
-            document.getElementById('contentArea').innerHTML = content;
-        }
-
         // Encryption Functions
         function encryptData(data) {
             const encryptionKey = currentUser.uid + 'SecureVault2024';
@@ -1280,62 +1489,7 @@
                 showAuth();
             } catch (error) {
                 console.error('Error signing out:', error);
-            }
-        }
-
-        // Show Error
-        function showError(message) {
-            const errorElement = document.getElementById('errorMessage');
-            if (errorElement) {
-                errorElement.textContent = message;
-                setTimeout(() => {
-                    errorElement.textContent = '';
-                }, 5000);
-            }
-        }
-
-        // PIN Functions
-        function showPINModal() {
-            document.getElementById('pinModal').style.display = 'flex';
-        }
-
-        async function verifyPIN() {
-            // Get PIN from inputs
-            const pinInputs = document.querySelectorAll('.pin-input input');
-            let pin = '';
-            pinInputs.forEach(input => pin += input.value);
-            
-            if (pin.length !== 6) {
-                alert('Please enter a 6-digit PIN');
-                return;
-            }
-            
-            try {
-                // Save PIN to Firestore (encrypted)
-                const encryptedPIN = encryptData(pin);
-                await setDoc(doc(db, 'pins', currentUser.uid), {
-                    pin: encryptedPIN,
-                    createdAt: serverTimestamp()
-                });
-                
-                document.getElementById('pinModal').style.display = 'none';
-                alert('PIN setup complete!');
-            } catch (error) {
-                console.error('Error saving PIN:', error);
-                alert('Failed to save PIN');
-            }
-        }
-
-        function setupNewPIN() {
-            // Clear inputs
-            const pinInputs = document.querySelectorAll('.pin-input input');
-            pinInputs.forEach(input => input.value = '');
-        }
-
-        function moveToNext(input, next) {
-            if (input.value.length === 1) {
-                const nextInput = input.parentElement.children[next];
-                if (nextInput) nextInput.focus();
+                alert('Failed to logout');
             }
         }
 
@@ -1392,34 +1546,6 @@
             }
         }
 
-        async function deleteFile(docId, fileUrl) {
-            if (!confirm('Are you sure you want to delete this file?')) return;
-            
-            try {
-                // Delete from Firestore
-                await deleteDoc(doc(db, 'vaults', currentUser.uid, 'documents', docId));
-                
-                // Delete from Storage
-                const fileRef = ref(storage, fileUrl);
-                await deleteObject(fileRef);
-                
-                // Determine file type and update usage
-                const docRef = doc(db, 'vaults', currentUser.uid, 'documents', docId);
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    const fileData = docSnap.data();
-                    const usageType = fileData.isImage ? 'images' : 'documents';
-                    await updateUsage(usageType, -1);
-                }
-                
-                await loadDocumentsList();
-                alert('File deleted successfully!');
-            } catch (error) {
-                console.error('Error deleting file:', error);
-                alert('Failed to delete file: ' + error.message);
-            }
-        }
-
         async function checkPremiumStatus() {
             try {
                 const premiumDocRef = doc(db, 'premium', currentUser.uid);
@@ -1454,136 +1580,7 @@
             }
         }
 
-        // Backup Functions
-        async function createBackup() {
-            try {
-                // Collect all data
-                const backupData = {
-                    userId: currentUser.uid,
-                    createdAt: new Date().toISOString(),
-                    data: {}
-                };
-                
-                // Get IDs
-                const idsQuery = query(collection(db, 'vaults', currentUser.uid, 'ids'));
-                const idsSnapshot = await getDocs(idsQuery);
-                backupData.data.ids = idsSnapshot.docs.map(doc => doc.data());
-                
-                // Get Passwords
-                const passwordsQuery = query(collection(db, 'vaults', currentUser.uid, 'passwords'));
-                const passwordsSnapshot = await getDocs(passwordsQuery);
-                backupData.data.passwords = passwordsSnapshot.docs.map(doc => doc.data());
-                
-                // Get Notes
-                const notesQuery = query(collection(db, 'vaults', currentUser.uid, 'notes'));
-                const notesSnapshot = await getDocs(notesQuery);
-                backupData.data.notes = notesSnapshot.docs.map(doc => doc.data());
-                
-                // Save backup to Firestore
-                await addDoc(collection(db, 'backups', currentUser.uid, 'history'), backupData);
-                
-                // Update last backup time
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    lastBackup: new Date().toISOString()
-                });
-                
-                alert('Backup created successfully!');
-            } catch (error) {
-                console.error('Error creating backup:', error);
-                alert('Failed to create backup: ' + error.message);
-            }
-        }
-
-        async function restoreBackup() {
-            if (!confirm('This will restore your data from the latest backup. Continue?')) return;
-            
-            try {
-                const backupsQuery = query(
-                    collection(db, 'backups', currentUser.uid, 'history'),
-                    orderBy('createdAt', 'desc'),
-                    limit(1)
-                );
-                
-                const backupsSnapshot = await getDocs(backupsQuery);
-                
-                if (backupsSnapshot.empty) {
-                    alert('No backup found');
-                    return;
-                }
-                
-                const backupData = backupsSnapshot.docs[0].data();
-                alert('Backup restoration started...');
-                // Implement restoration logic here
-                
-            } catch (error) {
-                console.error('Error restoring backup:', error);
-                alert('Failed to restore backup: ' + error.message);
-            }
-        }
-
-        // Upgrade to Premium (Mock Payment)
-        async function upgradeToPremium(plan) {
-            if (!confirm(`Upgrade to ${plan} premium plan for ${plan === 'monthly' ? '$4.99/month' : '$49.99/year'}?`)) return;
-            
-            try {
-                // In production, integrate with Stripe/Razorpay
-                // For demo, we'll simulate successful payment
-                
-                const expiryDate = new Date();
-                if (plan === 'monthly') {
-                    expiryDate.setMonth(expiryDate.getMonth() + 1);
-                } else {
-                    expiryDate.setFullYear(expiryDate.getFullYear() + 1);
-                }
-                
-                // Update premium status
-                await setDoc(doc(db, 'premium', currentUser.uid), {
-                    userId: currentUser.uid,
-                    plan: plan,
-                    upgradedAt: new Date().toISOString(),
-                    expiryDate: expiryDate.toISOString(),
-                    isActive: true
-                });
-                
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    isPremium: true,
-                    premiumPlan: plan,
-                    premiumSince: serverTimestamp(),
-                    premiumExpiry: expiryDate.toLocaleDateString()
-                });
-                
-                userData.isPremium = true;
-                isPremium = true;
-                updateUI();
-                
-                alert(`Premium ${plan} plan activated successfully!`);
-                showTab('premium');
-                
-            } catch (error) {
-                console.error('Error upgrading to premium:', error);
-                alert('Failed to upgrade: ' + error.message);
-            }
-        }
-
-        // File Functions
-        function previewImage(url) {
-            document.getElementById('modalImage').src = url;
-            document.getElementById('imageModal').style.display = 'flex';
-        }
-
-        function closeImageModal() {
-            document.getElementById('imageModal').style.display = 'none';
-        }
-
-        function downloadFile(url, filename) {
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
+        // Copy to clipboard
         function copyToClipboard(encryptedText) {
             const decrypted = decryptData(encryptedText);
             if (decrypted === 'Decryption failed') {
@@ -1600,6 +1597,34 @@
         }
 
         // Notes Functions
+        async function loadNotesTab() {
+            const content = `
+                <div class="card">
+                    <h3><i class="fas fa-sticky-note"></i> Secure Notes</h3>
+                    <p>Stored notes: ${userData.usage.notes || 0}/${isPremium ? 'Unlimited' : (userData.limits.notes || 10)}</p>
+                    
+                    <div class="form-group">
+                        <label>Note Title</label>
+                        <input type="text" class="form-control" id="noteTitle" placeholder="Enter title">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Note Content</label>
+                        <textarea class="form-control" id="noteContent" rows="4" placeholder="Enter your secure note"></textarea>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="saveNote()">
+                        <i class="fas fa-save"></i> Save Note
+                    </button>
+                    
+                    <div id="notesList" class="item-list" style="margin-top: 20px;"></div>
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = content;
+            await loadNotesList();
+        }
+
         async function saveNote() {
             if (!checkLimit('notes')) return;
             
@@ -1688,10 +1713,411 @@
                 alert('Failed to load note');
             }
         }
+
+        // Documents Tab (Simplified)
+        async function loadDocumentsTab() {
+            const content = `
+                <div class="card">
+                    <h3><i class="fas fa-folder"></i> Document Storage</h3>
+                    <p>Stored documents: ${userData.usage.documents || 0}/${isPremium ? 'Unlimited' : (userData.limits.documents || 5)}</p>
+                    <p>Stored images: ${userData.usage.images || 0}/${isPremium ? 'Unlimited' : (userData.limits.images || 5)}</p>
+                    
+                    <div class="upload-area" id="uploadArea">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 48px; color: #667eea; margin-bottom: 15px;"></i>
+                        <p>Drag & drop files here or click to browse</p>
+                        <p style="color: #666; font-size: 14px;">
+                            ${isPremium ? 'Premium: up to 2MB per file' : 'Free: Images max 500KB, documents max 1MB'}
+                        </p>
+                        <input type="file" id="fileInput" style="display: none;" multiple onchange="handleFileUpload(event)">
+                    </div>
+                    
+                    <div id="uploadProgress" style="display: none; margin-top: 20px;">
+                        <div class="progress-bar">
+                            <div class="progress" id="uploadProgressBar" style="width: 0%"></div>
+                        </div>
+                        <p id="uploadStatus" style="text-align: center; margin-top: 5px;"></p>
+                    </div>
+                    
+                    <div id="documentsList" style="margin-top: 20px;"></div>
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = content;
+            
+            // Setup upload area click
+            document.getElementById('uploadArea').addEventListener('click', () => {
+                document.getElementById('fileInput').click();
+            });
+            
+            await loadDocumentsList();
+        }
+
+        async function handleFileUpload(event) {
+            const files = event.target.files;
+            if (!files.length) return;
+            
+            const uploadProgress = document.getElementById('uploadProgress');
+            const progressBar = document.getElementById('uploadProgressBar');
+            const statusText = document.getElementById('uploadStatus');
+            
+            uploadProgress.style.display = 'block';
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                
+                // Check file type and size
+                const fileType = file.type;
+                const isImage = fileType.startsWith('image/');
+                const fileSizeMB = file.size / (1024 * 1024);
+                
+                if (isImage && !isPremium && fileSizeMB > 0.5) {
+                    alert('Free users can only upload images up to 500KB. Upgrade to Premium for larger files.');
+                    continue;
+                }
+                
+                if (!isPremium && fileSizeMB > 1) {
+                    alert('Free users can only upload files up to 1MB');
+                    continue;
+                }
+                
+                if (isPremium && fileSizeMB > 2) {
+                    alert('Premium users can upload files up to 2MB');
+                    continue;
+                }
+                
+                // Update progress
+                const progress = ((i + 1) / files.length) * 100;
+                progressBar.style.width = `${progress}%`;
+                statusText.textContent = `Uploading ${i + 1} of ${files.length}: ${file.name}`;
+                
+                try {
+                    // Upload to Firebase Storage
+                    const storageRef = ref(storage, `users/${currentUser.uid}/${Date.now()}_${file.name}`);
+                    await uploadBytes(storageRef, file);
+                    const downloadURL = await getDownloadURL(storageRef);
+                    
+                    // Save metadata to Firestore
+                    const fileData = {
+                        name: file.name,
+                        type: fileType,
+                        size: file.size,
+                        url: downloadURL,
+                        isImage: isImage,
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    await addDoc(collection(db, 'vaults', currentUser.uid, 'documents'), fileData);
+                    
+                    // Update usage
+                    const usageType = isImage ? 'images' : 'documents';
+                    await updateUsage(usageType, 1);
+                    
+                } catch (error) {
+                    console.error('Error uploading file:', error);
+                    alert(`Failed to upload ${file.name}: ${error.message}`);
+                }
+            }
+            
+            // Reset and reload
+            progressBar.style.width = '0%';
+            statusText.textContent = '';
+            uploadProgress.style.display = 'none';
+            event.target.value = '';
+            
+            await loadDocumentsList();
+            alert('Files uploaded successfully!');
+        }
+
+        async function loadDocumentsList() {
+            try {
+                const documentsQuery = query(
+                    collection(db, 'vaults', currentUser.uid, 'documents'),
+                    orderBy('createdAt', 'desc')
+                );
+                
+                const querySnapshot = await getDocs(documentsQuery);
+                const documentsList = document.getElementById('documentsList');
+                
+                if (!documentsList) return;
+                
+                if (querySnapshot.empty) {
+                    documentsList.innerHTML = '<p style="color: #666; text-align: center;">No documents uploaded yet</p>';
+                    return;
+                }
+                
+                documentsList.innerHTML = '';
+                
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const fileSizeKB = Math.round(data.size / 1024);
+                    
+                    const item = document.createElement('div');
+                    item.className = 'file-item';
+                    item.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            ${data.isImage ? 
+                                `<i class="fas fa-image" style="color: #4CAF50;"></i>` : 
+                                `<i class="fas fa-file" style="color: #2196F3;"></i>`}
+                            <div>
+                                <div>${data.name}</div>
+                                <small style="color: #666;">${fileSizeKB} KB • ${new Date(data.createdAt).toLocaleDateString()}</small>
+                            </div>
+                        </div>
+                        <div>
+                            <a href="${data.url}" target="_blank" class="btn">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                            <button class="btn" onclick="downloadFile('${data.url}', '${data.name}')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <button class="btn btn-danger" onclick="deleteFile('${docSnap.id}', '${data.url}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    documentsList.appendChild(item);
+                });
+            } catch (error) {
+                console.error('Error loading documents:', error);
+                document.getElementById('documentsList').innerHTML = '<p style="color: #dc3545;">Error loading documents</p>';
+            }
+        }
+
+        async function deleteFile(docId, fileUrl) {
+            if (!confirm('Are you sure you want to delete this file?')) return;
+            
+            try {
+                // Delete from Firestore
+                await deleteDoc(doc(db, 'vaults', currentUser.uid, 'documents', docId));
+                
+                // Delete from Storage
+                const fileRef = ref(storage, fileUrl);
+                await deleteObject(fileRef);
+                
+                // Update usage
+                const docRef = doc(db, 'vaults', currentUser.uid, 'documents', docId);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const fileData = docSnap.data();
+                    const usageType = fileData.isImage ? 'images' : 'documents';
+                    await updateUsage(usageType, -1);
+                }
+                
+                await loadDocumentsList();
+                alert('File deleted successfully!');
+            } catch (error) {
+                console.error('Error deleting file:', error);
+                alert('Failed to delete file: ' + error.message);
+            }
+        }
+
+        function downloadFile(url, filename) {
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Backup Tab
+        function loadBackupTab() {
+            const content = `
+                <div class="card">
+                    <h3><i class="fas fa-cloud-upload-alt"></i> Backup & Restore</h3>
+                    
+                    ${isPremium ? `
+                        <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 15px; border-radius: 10px; color: white; margin-bottom: 20px;">
+                            <h4><i class="fas fa-sync"></i> Automatic Backup Enabled</h4>
+                            <p>Your data is automatically backed up</p>
+                        </div>
+                    ` : `
+                        <div style="background: #fff3cd; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                            <h4><i class="fas fa-exclamation-triangle"></i> Manual Backup Only</h4>
+                            <p>Free users can manually backup data only</p>
+                        </div>
+                    `}
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
+                        <button class="btn btn-primary" onclick="createBackup()">
+                            <i class="fas fa-download"></i> Create Backup
+                        </button>
+                        
+                        <button class="btn" onclick="restoreBackup()">
+                            <i class="fas fa-upload"></i> Restore from Backup
+                        </button>
+                        
+                        ${!isPremium ? `
+                            <button class="btn btn-success" onclick="showTab('premium')">
+                                <i class="fas fa-crown"></i> Upgrade for Auto Backup
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = content;
+        }
+
+        async function createBackup() {
+            try {
+                // Collect all data
+                const backupData = {
+                    userId: currentUser.uid,
+                    createdAt: new Date().toISOString(),
+                    data: {}
+                };
+                
+                // Get IDs
+                const idsQuery = query(collection(db, 'vaults', currentUser.uid, 'ids'));
+                const idsSnapshot = await getDocs(idsQuery);
+                backupData.data.ids = idsSnapshot.docs.map(doc => doc.data());
+                
+                // Get Passwords
+                const passwordsQuery = query(collection(db, 'vaults', currentUser.uid, 'passwords'));
+                const passwordsSnapshot = await getDocs(passwordsQuery);
+                backupData.data.passwords = passwordsSnapshot.docs.map(doc => doc.data());
+                
+                // Get Notes
+                const notesQuery = query(collection(db, 'vaults', currentUser.uid, 'notes'));
+                const notesSnapshot = await getDocs(notesQuery);
+                backupData.data.notes = notesSnapshot.docs.map(doc => doc.data());
+                
+                // Save backup to Firestore
+                await addDoc(collection(db, 'backups', currentUser.uid, 'history'), backupData);
+                
+                // Update last backup time
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    lastBackup: new Date().toISOString()
+                });
+                
+                alert('Backup created successfully!');
+            } catch (error) {
+                console.error('Error creating backup:', error);
+                alert('Failed to create backup: ' + error.message);
+            }
+        }
+
+        // Premium Tab
+        function loadPremiumTab() {
+            const content = `
+                <div class="card">
+                    <h3><i class="fas fa-crown"></i> Premium Features</h3>
+                    
+                    ${!isPremium ? `
+                        <div style="background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
+                            <h4 style="color: #333;">Upgrade to Premium!</h4>
+                            <p style="color: #333;">Unlock unlimited storage and advanced features</p>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                            <div style="background: white; padding: 20px; border-radius: 10px; border: 2px solid #ddd;">
+                                <h4>Monthly Plan</h4>
+                                <h2>$4.99<span style="font-size: 14px; color: #666;">/month</span></h2>
+                                <ul style="margin: 15px 0; color: #666;">
+                                    <li>✓ Unlimited IDs, Passwords, Notes</li>
+                                    <li>✓ Unlimited document storage</li>
+                                    <li>✓ Images up to 2MB</li>
+                                    <li>✓ Automatic Google Drive backup</li>
+                                    <li>✓ Multi-device sync</li>
+                                </ul>
+                                <button class="btn btn-success" style="width: 100%;" onclick="upgradeToPremium('monthly')">
+                                    <i class="fas fa-credit-card"></i> Subscribe Monthly
+                                </button>
+                            </div>
+                            
+                            <div style="background: white; padding: 20px; border-radius: 10px; border: 2px solid #f6d365;">
+                                <div style="background: #f6d365; color: #333; padding: 5px 10px; border-radius: 20px; display: inline-block; margin-bottom: 10px;">
+                                    <small><strong>SAVE 15%</strong></small>
+                                </div>
+                                <h4>Yearly Plan</h4>
+                                <h2>$49.99<span style="font-size: 14px; color: #666;">/year</span></h2>
+                                <ul style="margin: 15px 0; color: #666;">
+                                    <li>✓ All monthly features</li>
+                                    <li>✓ Save 15% with yearly billing</li>
+                                    <li>✓ Priority support</li>
+                                    <li>✓ Early access to new features</li>
+                                </ul>
+                                <button class="btn btn-success" style="width: 100%; background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);" onclick="upgradeToPremium('yearly')">
+                                    <i class="fas fa-crown"></i> Subscribe Yearly
+                                </button>
+                            </div>
+                        </div>
+                    ` : `
+                        <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 20px; border-radius: 10px; color: white; margin-bottom: 20px; text-align: center;">
+                            <h4>🎉 You're a Premium Member!</h4>
+                            <p>Enjoy all premium features</p>
+                        </div>
+                        
+                        <div style="margin-top: 20px;">
+                            <h4>Active Premium Features:</h4>
+                            <ul style="margin: 15px 0; color: #666;">
+                                <li><i class="fas fa-check-circle" style="color: #28a745;"></i> Unlimited storage for all item types</li>
+                                <li><i class="fas fa-check-circle" style="color: #28a745;"></i> Automatic backup</li>
+                                <li><i class="fas fa-check-circle" style="color: #28a745;"></i> Multi-device sync</li>
+                                <li><i class="fas fa-check-circle" style="color: #28a745;"></i> High-quality images (up to 2MB)</li>
+                                <li><i class="fas fa-check-circle" style="color: #28a745;"></i> Priority customer support</li>
+                            </ul>
+                        </div>
+                    `}
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = content;
+        }
+
+        async function upgradeToPremium(plan) {
+            if (!confirm(`Upgrade to ${plan} premium plan for ${plan === 'monthly' ? '$4.99/month' : '$49.99/year'}?`)) return;
+            
+            try {
+                // For demo, we'll simulate successful payment
+                const expiryDate = new Date();
+                if (plan === 'monthly') {
+                    expiryDate.setMonth(expiryDate.getMonth() + 1);
+                } else {
+                    expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+                }
+                
+                // Update premium status
+                await setDoc(doc(db, 'premium', currentUser.uid), {
+                    userId: currentUser.uid,
+                    plan: plan,
+                    upgradedAt: new Date().toISOString(),
+                    expiryDate: expiryDate.toISOString(),
+                    isActive: true
+                });
+                
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    isPremium: true,
+                    premiumPlan: plan,
+                    premiumSince: serverTimestamp(),
+                    premiumExpiry: expiryDate.toLocaleDateString()
+                });
+                
+                userData.isPremium = true;
+                isPremium = true;
+                updateUI();
+                
+                alert(`Premium ${plan} plan activated successfully!`);
+                showTab('premium');
+                
+            } catch (error) {
+                console.error('Error upgrading to premium:', error);
+                alert('Failed to upgrade: ' + error.message);
+            }
+        }
+
+        async function restoreBackup() {
+            if (!confirm('This will restore your data from the latest backup. Continue?')) return;
+            
+            try {
+                alert('Backup restoration started...');
+                // Implement restoration logic here
+            } catch (error) {
+                console.error('Error restoring backup:', error);
+                alert('Failed to restore backup: ' + error.message);
+            }
+        }
     </script>
-    <script><!-- Add this function to users.html script -->
-function goToHome() {
-    window.location.href = "index.html";
-}. </script>
 </body>
 </html>
