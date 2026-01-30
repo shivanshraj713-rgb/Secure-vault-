@@ -6,6 +6,7 @@
     <title>SecureVault - User Panel</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
+        /* Reset and base styles */
         * {
             margin: 0;
             padding: 0;
@@ -16,31 +17,21 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: 20px;
         }
 
         /* Authentication Screen */
         .auth-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .auth-box {
+            width: 100%;
+            max-width: 400px;
             background: white;
             padding: 40px;
             border-radius: 15px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             text-align: center;
-            width: 100%;
-            max-width: 400px;
         }
 
         .logo {
@@ -104,6 +95,7 @@
         /* Form Styles */
         .auth-form {
             display: none;
+            animation: fadeIn 0.3s ease;
         }
 
         .auth-form.active {
@@ -166,6 +158,7 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+            margin-bottom: 15px;
         }
 
         .btn-primary {
@@ -175,13 +168,14 @@
 
         .btn-primary:hover {
             background: #5a6fd8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
         .btn-google {
             background: white;
             color: #333;
             border: 2px solid #ddd;
-            margin-top: 15px;
         }
 
         .btn-google:hover {
@@ -261,11 +255,57 @@
 
         .error-message.show {
             display: block;
+            animation: shake 0.5s ease;
         }
 
-        /* Main Application (Existing Styles Remain) */
+        /* Success Message */
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        /* Main App Container */
         .app-container {
             display: none;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
             background: white;
             border-radius: 15px;
             overflow: hidden;
@@ -273,6 +313,7 @@
             min-height: 90vh;
         }
 
+        /* Header */
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -280,12 +321,15 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .user-info {
             display: flex;
             align-items: center;
             gap: 15px;
+            flex-wrap: wrap;
         }
 
         .user-avatar {
@@ -298,12 +342,14 @@
             justify-content: center;
             font-weight: bold;
             color: white;
+            font-size: 18px;
         }
 
         .nav-tabs {
             display: flex;
             background: #f8f9fa;
             border-bottom: 1px solid #dee2e6;
+            flex-wrap: wrap;
         }
 
         .nav-tab {
@@ -311,12 +357,16 @@
             cursor: pointer;
             border-bottom: 3px solid transparent;
             transition: all 0.3s;
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
         }
 
         .nav-tab.active {
             border-bottom-color: #667eea;
             background: white;
             color: #667eea;
+            font-weight: 600;
         }
 
         .content-area {
@@ -333,39 +383,19 @@
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
         }
 
         .card h3 {
             margin-bottom: 15px;
             color: #333;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            background: #667eea;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #5a6fd8;
-        }
-
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-
-        .btn-danger {
-            background: #dc3545;
-            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .premium-badge {
@@ -375,322 +405,328 @@
             border-radius: 20px;
             font-size: 12px;
             font-weight: bold;
+            display: inline-block;
+            margin-left: 10px;
         }
 
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .auth-box {
+            .auth-container {
                 padding: 20px;
             }
             
-            .content-area {
-                grid-template-columns: 1fr;
+            .app-container {
+                border-radius: 10px;
+            }
+            
+            .header {
+                flex-direction: column;
+                text-align: center;
+                padding: 15px;
+            }
+            
+            .user-info {
+                flex-direction: column;
+                text-align: center;
             }
             
             .nav-tabs {
-                flex-wrap: wrap;
+                flex-direction: column;
             }
             
             .nav-tab {
-                flex: 1;
-                min-width: 120px;
-                text-align: center;
-                padding: 12px 10px;
+                padding: 12px;
+                border-bottom: none;
+                border-right: 3px solid transparent;
+                text-align: left;
             }
-        }
-
-        /* Progress and Upload Styles */
-        .progress-bar {
-            width: 100%;
-            height: 20px;
-            background: #e9ecef;
-            border-radius: 10px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-
-        .progress {
-            height: 100%;
-            background: #28a745;
-            transition: width 0.3s;
-        }
-
-        .upload-area {
-            border: 2px dashed #ddd;
-            padding: 40px;
-            text-align: center;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .upload-area:hover {
-            border-color: #667eea;
-            background: #f8f9fa;
-        }
-
-        .file-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            background: white;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            border: 1px solid #dee2e6;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            max-width: 400px;
-            width: 90%;
+            
+            .nav-tab.active {
+                border-bottom: none;
+                border-right-color: #667eea;
+            }
+            
+            .content-area {
+                padding: 15px;
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Authentication Screen -->
     <div class="auth-container" id="authScreen">
-        <div class="auth-box">
-            <div class="logo">🔐</div>
-            <h1>SecureVault</h1>
-            <p class="subtitle">Your secure digital vault</p>
-            
-            <!-- Tabs -->
-            <div class="auth-tabs">
-                <button class="auth-tab active" onclick="showAuthForm('login')">Login</button>
-                <button class="auth-tab" onclick="showAuthForm('signup')">Sign Up</button>
+        <div class="logo">🔐</div>
+        <h1>SecureVault</h1>
+        <p class="subtitle">Your secure digital vault</p>
+        
+        <!-- Tabs -->
+        <div class="auth-tabs">
+            <button class="auth-tab active" onclick="showAuthForm('login')">Login</button>
+            <button class="auth-tab" onclick="showAuthForm('signup')">Sign Up</button>
+        </div>
+        
+        <!-- Error Message -->
+        <div class="error-message" id="errorMessage"></div>
+        
+        <!-- Success Message -->
+        <div class="success-message" id="successMessage"></div>
+        
+        <!-- Login Form -->
+        <form id="loginForm" class="auth-form active" onsubmit="event.preventDefault(); loginWithEmail();">
+            <div class="form-group">
+                <label for="loginEmail">Email Address</label>
+                <input type="email" class="form-control" id="loginEmail" placeholder="Enter your email" required>
             </div>
             
-            <!-- Error Message -->
-            <div class="error-message" id="errorMessage"></div>
-            
-            <!-- Login Form -->
-            <div id="loginForm" class="auth-form active">
-                <div class="form-group">
-                    <label for="loginEmail">Email Address</label>
-                    <input type="email" class="form-control" id="loginEmail" placeholder="Enter your email">
-                </div>
-                
-                <div class="form-group">
-                    <label for="loginPassword">Password</label>
-                    <div class="password-input">
-                        <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password">
-                        <button class="toggle-password" type="button" onclick="togglePassword('loginPassword')">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <a href="#" class="auth-link" onclick="showForgotPassword()">Forgot Password?</a>
-                </div>
-                
-                <button class="btn btn-primary" onclick="loginWithEmail()">
-                    <i class="fas fa-sign-in-alt"></i> Login
-                </button>
-            </div>
-            
-            <!-- Signup Form -->
-            <div id="signupForm" class="auth-form">
-                <div class="form-group">
-                    <label for="signupName">Full Name</label>
-                    <input type="text" class="form-control" id="signupName" placeholder="Enter your full name">
-                </div>
-                
-                <div class="form-group">
-                    <label for="signupEmail">Email Address</label>
-                    <input type="email" class="form-control" id="signupEmail" placeholder="Enter your email">
-                </div>
-                
-                <div class="form-group">
-                    <label for="signupPassword">Password</label>
-                    <div class="password-input">
-                        <input type="password" class="form-control" id="signupPassword" placeholder="Create a password">
-                        <button class="toggle-password" type="button" onclick="togglePassword('signupPassword')">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="confirmPassword">Confirm Password</label>
-                    <div class="password-input">
-                        <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm your password">
-                        <button class="toggle-password" type="button" onclick="togglePassword('confirmPassword')">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <button class="btn btn-primary" onclick="signupWithEmail()">
-                    <i class="fas fa-user-plus"></i> Create Account
-                </button>
-            </div>
-            
-            <!-- Forgot Password Form -->
-            <div id="forgotPasswordForm" class="auth-form">
-                <div class="form-group">
-                    <label for="resetEmail">Email Address</label>
-                    <input type="email" class="form-control" id="resetEmail" placeholder="Enter your email">
-                </div>
-                
-                <div class="form-group">
-                    <button class="btn btn-primary" onclick="resetPassword()">
-                        <i class="fas fa-key"></i> Reset Password
+            <div class="form-group">
+                <label for="loginPassword">Password</label>
+                <div class="password-input">
+                    <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password" required>
+                    <button type="button" class="toggle-password" onclick="togglePassword('loginPassword')">
+                        <i class="fas fa-eye"></i>
                     </button>
                 </div>
-                
-                <div class="form-group">
-                    <a href="#" class="auth-link" onclick="showAuthForm('login')">Back to Login</a>
+            </div>
+            
+            <div class="form-group">
+                <a href="#" class="auth-link" onclick="showForgotPassword()">Forgot Password?</a>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" id="loginBtn">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+        </form>
+        
+        <!-- Signup Form -->
+        <form id="signupForm" class="auth-form" onsubmit="event.preventDefault(); signupWithEmail();">
+            <div class="form-group">
+                <label for="signupName">Full Name</label>
+                <input type="text" class="form-control" id="signupName" placeholder="Enter your full name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="signupEmail">Email Address</label>
+                <input type="email" class="form-control" id="signupEmail" placeholder="Enter your email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="signupPassword">Password (min. 6 characters)</label>
+                <div class="password-input">
+                    <input type="password" class="form-control" id="signupPassword" placeholder="Create a password" minlength="6" required>
+                    <button type="button" class="toggle-password" onclick="togglePassword('signupPassword')">
+                        <i class="fas fa-eye"></i>
+                    </button>
                 </div>
             </div>
             
-            <!-- Google Sign-in Divider -->
-            <div class="divider">
-                <span>Or continue with</span>
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <div class="password-input">
+                    <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm your password" minlength="6" required>
+                    <button type="button" class="toggle-password" onclick="togglePassword('confirmPassword')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
             </div>
             
-            <!-- Google Sign-in Button -->
-            <button class="btn btn-google" onclick="signInWithGoogle()">
-                <i class="fab fa-google"></i> Google
+            <button type="submit" class="btn btn-primary" id="signupBtn">
+                <i class="fas fa-user-plus"></i> Create Account
+            </button>
+        </form>
+        
+        <!-- Forgot Password Form -->
+        <form id="forgotPasswordForm" class="auth-form" onsubmit="event.preventDefault(); resetPassword();">
+            <div class="form-group">
+                <label for="resetEmail">Email Address</label>
+                <input type="email" class="form-control" id="resetEmail" placeholder="Enter your email" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" id="resetBtn">
+                <i class="fas fa-key"></i> Reset Password
             </button>
             
-            <!-- Back to Home -->
-            <div class="back-home">
-                <a href="index.html">
-                    <i class="fas fa-home"></i> Back to Home
-                </a>
+            <div class="form-group" style="text-align: center; margin-top: 15px;">
+                <a href="#" class="auth-link" onclick="showAuthForm('login')">Back to Login</a>
             </div>
+        </form>
+        
+        <!-- Google Sign-in Divider -->
+        <div class="divider">
+            <span>Or continue with</span>
+        </div>
+        
+        <!-- Google Sign-in Button -->
+        <button class="btn btn-google" onclick="signInWithGoogle()">
+            <i class="fab fa-google"></i> Continue with Google
+        </button>
+        
+        <!-- Back to Home -->
+        <div class="back-home">
+            <a href="index.html">
+                <i class="fas fa-home"></i> Back to Home
+            </a>
         </div>
     </div>
 
     <!-- Main Application -->
-    <div class="container" id="appContainer">
-        <div class="app-container">
-            <!-- Header -->
-            <div class="header">
-                <h2><i class="fas fa-shield-alt"></i> SecureVault</h2>
-                <div class="user-info">
-                    <div class="user-avatar" id="userAvatar">
-                        <!-- Initial will be set by JavaScript -->
-                    </div>
-                    <div>
-                        <div id="userName"></div>
-                        <div id="userStatus" style="font-size: 12px;"></div>
-                    </div>
-                    <!-- Home Button -->
-                    <button class="btn" onclick="goToHome()" style="margin-right: 10px;">
-                        <i class="fas fa-home"></i> Home
-                    </button>
-                    <button class="btn btn-danger" id="logoutBtn">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </button>
+    <div class="app-container" id="appContainer">
+        <!-- Header -->
+        <div class="header">
+            <h2><i class="fas fa-shield-alt"></i> SecureVault</h2>
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div>
+                    <div id="userName">User</div>
+                    <div id="userStatus" style="font-size: 12px;"></div>
                 </div>
+                <button class="btn btn-primary" onclick="goToHome()" style="margin-right: 10px;">
+                    <i class="fas fa-home"></i> Home
+                </button>
+                <button class="btn btn-danger" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
             </div>
+        </div>
 
-            <!-- Navigation -->
-            <div class="nav-tabs">
-                <div class="nav-tab active" onclick="showTab('dashboard')">Dashboard</div>
-                <div class="nav-tab" onclick="showTab('ids')">IDs</div>
-                <div class="nav-tab" onclick="showTab('passwords')">Passwords</div>
-                <div class="nav-tab" onclick="showTab('notes')">Notes</div>
-                <div class="nav-tab" onclick="showTab('documents')">Documents</div>
-                <div class="nav-tab" onclick="showTab('backup')">Backup</div>
-                <div class="nav-tab" onclick="showTab('premium')">Premium</div>
+        <!-- Navigation -->
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="showTab('dashboard')">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
             </div>
+            <div class="nav-tab" onclick="showTab('ids')">
+                <i class="fas fa-id-card"></i> IDs
+            </div>
+            <div class="nav-tab" onclick="showTab('passwords')">
+                <i class="fas fa-key"></i> Passwords
+            </div>
+            <div class="nav-tab" onclick="showTab('notes')">
+                <i class="fas fa-sticky-note"></i> Notes
+            </div>
+            <div class="nav-tab" onclick="showTab('documents')">
+                <i class="fas fa-folder"></i> Documents
+            </div>
+            <div class="nav-tab" onclick="showTab('backup')">
+                <i class="fas fa-cloud-upload-alt"></i> Backup
+            </div>
+            <div class="nav-tab" onclick="showTab('premium')">
+                <i class="fas fa-crown"></i> Premium
+            </div>
+        </div>
 
-            <!-- Content Area -->
-            <div class="content-area" id="contentArea">
-                <!-- Tab content will be loaded here -->
-            </div>
+        <!-- Content Area -->
+        <div class="content-area" id="contentArea">
+            <!-- Content will be loaded here -->
         </div>
     </div>
 
-    <!-- CryptoJS for encryption -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-
+    <!-- Firebase SDKs -->
     <script type="module">
-        // Import Firebase modules
+        // Import the functions you need from the SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { 
-            auth, 
-            db, 
-            storage, 
-            googleProvider,
-            createUserWithEmailAndPassword,
-            signInWithEmailAndPassword,
-            signInWithPopup,
-            sendPasswordResetEmail,
-            collection, doc, getDoc, 
-            setDoc, updateDoc, addDoc, query, where, 
-            orderBy, getDocs, deleteDoc, serverTimestamp,
-            ref, uploadBytes, getDownloadURL, deleteObject
-        } from './firebase-config.js';
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword, 
+            signInWithPopup, 
+            GoogleAuthProvider,
+            signOut,
+            onAuthStateChanged,
+            sendPasswordResetEmail
+        } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            setDoc, 
+            getDoc, 
+            updateDoc, 
+            addDoc, 
+            query, 
+            where, 
+            orderBy, 
+            getDocs, 
+            deleteDoc,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { 
+            getStorage,
+            ref,
+            uploadBytes,
+            getDownloadURL,
+            deleteObject
+        } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
 
-        // Import auth functions
-        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAPi764UXdaw3tfWpUGekoflOW-LK-xVtU",
+            authDomain: "vault-2d534.firebaseapp.com",
+            databaseURL: "https://vault-2d534-default-rtdb.firebaseio.com",
+            projectId: "vault-2d534",
+            storageBucket: "vault-2d534.firebasestorage.app",
+            messagingSenderId: "934380066941",
+            appId: "1:934380066941:web:e3439bb584338da9de3914"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+        const googleProvider = new GoogleAuthProvider();
 
         // App State
         let currentUser = null;
         let userData = null;
         let isPremium = false;
-        let inactivityTimer;
-        const INACTIVITY_TIMEOUT = 5 * 60 * 1000; // 5 minutes
 
         // Initialize app
-        document.addEventListener('DOMContentLoaded', initApp);
+        document.addEventListener('DOMContentLoaded', function() {
+            initApp();
+        });
 
         async function initApp() {
-            // Setup event listeners
-            document.getElementById('logoutBtn').addEventListener('click', logoutHandler);
-
+            console.log('Initializing SecureVault...');
+            
             // Check auth state
             onAuthStateChanged(auth, async (user) => {
+                console.log('Auth state changed:', user ? 'User logged in' : 'No user');
                 if (user) {
                     currentUser = user;
                     await loadUserData();
                     showApp();
-                    startInactivityTimer();
                     await checkPremiumStatus();
                 } else {
                     showAuth();
                 }
             });
 
-            // Reset inactivity timer on user activity
-            document.addEventListener('mousemove', resetInactivityTimer);
-            document.addEventListener('keypress', resetInactivityTimer);
-            
-            // Add enter key support for forms
+            // Set up enter key for forms
+            setupFormListeners();
+        }
+
+        // Form Listeners
+        function setupFormListeners() {
+            // Login form enter key
             document.getElementById('loginPassword')?.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') loginWithEmail();
             });
             
-            document.getElementById('signupPassword')?.addEventListener('keypress', (e) => {
+            // Signup form enter key
+            document.getElementById('confirmPassword')?.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') signupWithEmail();
+            });
+            
+            // Reset form enter key
+            document.getElementById('resetEmail')?.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') resetPassword();
             });
         }
 
-        // Show/Hide authentication forms
+        // Show/Hide forms
         function showAuthForm(formType) {
+            console.log('Showing form:', formType);
+            
             // Hide all forms
             document.getElementById('loginForm').classList.remove('active');
             document.getElementById('signupForm').classList.remove('active');
@@ -709,8 +745,8 @@
                 document.querySelector(`.auth-tab[onclick="showAuthForm('${formType}')"]`).classList.add('active');
             }
             
-            // Clear error message
-            clearError();
+            // Clear messages
+            clearMessages();
         }
 
         function showForgotPassword() {
@@ -733,25 +769,56 @@
             }
         }
 
-        // Error handling
+        // Message handling
         function showError(message) {
             const errorElement = document.getElementById('errorMessage');
             errorElement.textContent = message;
             errorElement.classList.add('show');
+            console.error('Error:', message);
         }
 
-        function clearError() {
-            const errorElement = document.getElementById('errorMessage');
-            errorElement.textContent = '';
-            errorElement.classList.remove('show');
+        function showSuccess(message) {
+            const successElement = document.getElementById('successMessage');
+            successElement.textContent = message;
+            successElement.classList.add('show');
+            console.log('Success:', message);
+        }
+
+        function clearMessages() {
+            document.getElementById('errorMessage').classList.remove('show');
+            document.getElementById('successMessage').classList.remove('show');
+        }
+
+        // Loading state
+        function setLoading(buttonId, isLoading) {
+            const button = document.getElementById(buttonId);
+            if (!button) return;
+            
+            if (isLoading) {
+                button.innerHTML = '<div class="spinner"></div> Loading...';
+                button.disabled = true;
+            } else {
+                button.innerHTML = buttonId === 'loginBtn' ? 
+                    '<i class="fas fa-sign-in-alt"></i> Login' : 
+                    buttonId === 'signupBtn' ? 
+                    '<i class="fas fa-user-plus"></i> Create Account' :
+                    '<i class="fas fa-key"></i> Reset Password';
+                button.disabled = false;
+            }
+        }
+
+        // Email validation
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
         }
 
         // Email/Password Login
         async function loginWithEmail() {
+            console.log('Login attempt...');
             const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
             
-            // Validation
             if (!email || !password) {
                 showError('Please enter both email and password');
                 return;
@@ -762,14 +829,16 @@
                 return;
             }
             
+            setLoading('loginBtn', true);
+            
             try {
+                console.log('Attempting Firebase login...');
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                console.log('User logged in:', userCredential.user);
+                console.log('Login successful:', userCredential.user);
                 // onAuthStateChanged will handle the rest
             } catch (error) {
-                console.error('Login error:', error);
+                console.error('Login error:', error.code, error.message);
                 
-                // User-friendly error messages
                 switch (error.code) {
                     case 'auth/invalid-credential':
                     case 'auth/wrong-password':
@@ -784,14 +853,20 @@
                     case 'auth/too-many-requests':
                         showError('Too many failed attempts. Please try again later');
                         break;
+                    case 'auth/invalid-email':
+                        showError('Invalid email format');
+                        break;
                     default:
                         showError('Login failed: ' + error.message);
                 }
+            } finally {
+                setLoading('loginBtn', false);
             }
         }
 
         // Email/Password Signup
         async function signupWithEmail() {
+            console.log('Signup attempt...');
             const name = document.getElementById('signupName').value.trim();
             const email = document.getElementById('signupEmail').value.trim();
             const password = document.getElementById('signupPassword').value;
@@ -818,10 +893,14 @@
                 return;
             }
             
+            setLoading('signupBtn', true);
+            
             try {
+                console.log('Creating Firebase user...');
                 // Create user with email and password
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
+                console.log('User created:', user);
                 
                 // Update user profile with name
                 await user.updateProfile({
@@ -851,13 +930,23 @@
                     }
                 });
                 
-                console.log('User created:', user);
-                // onAuthStateChanged will handle the rest
+                console.log('User document created');
+                showSuccess('Account created successfully!');
+                
+                // Clear form
+                document.getElementById('signupName').value = '';
+                document.getElementById('signupEmail').value = '';
+                document.getElementById('signupPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+                
+                // Auto-login after successful signup
+                setTimeout(() => {
+                    loginWithEmail();
+                }, 2000);
                 
             } catch (error) {
-                console.error('Signup error:', error);
+                console.error('Signup error:', error.code, error.message);
                 
-                // User-friendly error messages
                 switch (error.code) {
                     case 'auth/email-already-in-use':
                         showError('An account with this email already exists');
@@ -874,11 +963,14 @@
                     default:
                         showError('Signup failed: ' + error.message);
                 }
+            } finally {
+                setLoading('signupBtn', false);
             }
         }
 
         // Reset Password
         async function resetPassword() {
+            console.log('Reset password attempt...');
             const email = document.getElementById('resetEmail').value.trim();
             
             if (!email || !validateEmail(email)) {
@@ -886,11 +978,14 @@
                 return;
             }
             
+            setLoading('resetBtn', true);
+            
             try {
+                console.log('Sending password reset email...');
                 await sendPasswordResetEmail(auth, email);
-                showError('Password reset email sent! Check your inbox.');
+                showSuccess('Password reset email sent! Check your inbox.');
                 
-                // Clear email field
+                // Clear form
                 document.getElementById('resetEmail').value = '';
                 
                 // Return to login after 3 seconds
@@ -899,7 +994,7 @@
                 }, 3000);
                 
             } catch (error) {
-                console.error('Reset password error:', error);
+                console.error('Reset password error:', error.code, error.message);
                 
                 switch (error.code) {
                     case 'auth/user-not-found':
@@ -914,20 +1009,25 @@
                     default:
                         showError('Failed to send reset email: ' + error.message);
                 }
+            } finally {
+                setLoading('resetBtn', false);
             }
         }
 
         // Google Sign In
         async function signInWithGoogle() {
+            console.log('Google sign-in attempt...');
             try {
                 const result = await signInWithPopup(auth, googleProvider);
                 const user = result.user;
+                console.log('Google sign-in successful:', user);
                 
                 // Check if user document exists
                 const userDocRef = doc(db, 'users', user.uid);
                 const userDoc = await getDoc(userDocRef);
                 
                 if (!userDoc.exists()) {
+                    console.log('Creating user document for Google user...');
                     // Create new user document for Google user
                     await setDoc(userDocRef, {
                         email: user.email,
@@ -952,18 +1052,20 @@
                     });
                 }
                 
-                console.log('Google user logged in:', user);
+                console.log('Google authentication complete');
                 // onAuthStateChanged will handle the rest
                 
             } catch (error) {
-                console.error('Google sign-in error:', error);
+                console.error('Google sign-in error:', error.code, error.message);
                 
                 switch (error.code) {
                     case 'auth/popup-closed-by-user':
                         // User closed the popup, no error needed
+                        console.log('User closed Google popup');
                         break;
                     case 'auth/cancelled-popup-request':
                         // Multiple popups opened, no error needed
+                        console.log('Google popup cancelled');
                         break;
                     case 'auth/popup-blocked':
                         showError('Popup was blocked by browser. Please allow popups for this site.');
@@ -974,22 +1076,18 @@
             }
         }
 
-        // Email validation helper
-        function validateEmail(email) {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return re.test(email);
-        }
-
-        // Load user data from Firestore
+        // Load user data
         async function loadUserData() {
             try {
+                console.log('Loading user data for:', currentUser.uid);
                 const userDocRef = doc(db, 'users', currentUser.uid);
                 const userDoc = await getDoc(userDocRef);
                 
                 if (userDoc.exists()) {
                     userData = userDoc.data();
-                    updateUI();
+                    console.log('User data loaded:', userData);
                 } else {
+                    console.log('Creating new user document...');
                     // Create new user document if it doesn't exist
                     userData = {
                         email: currentUser.email,
@@ -1016,41 +1114,23 @@
                     await setDoc(userDocRef, userData);
                 }
                 
+                updateUI();
+                
             } catch (error) {
                 console.error('Error loading user data:', error);
                 showError('Failed to load user data');
             }
         }
 
-        // Show/Hide screens
-        function showApp() {
-            document.getElementById('authScreen').style.display = 'none';
-            document.getElementById('appContainer').style.display = 'block';
-            showTab('dashboard');
-        }
-
-        function showAuth() {
-            document.getElementById('authScreen').style.display = 'flex';
-            document.getElementById('appContainer').style.display = 'none';
-            // Reset forms
-            document.getElementById('loginEmail').value = '';
-            document.getElementById('loginPassword').value = '';
-            document.getElementById('signupName').value = '';
-            document.getElementById('signupEmail').value = '';
-            document.getElementById('signupPassword').value = '';
-            document.getElementById('confirmPassword').value = '';
-            document.getElementById('resetEmail').value = '';
-            clearError();
-            showAuthForm('login');
-        }
-
+        // Update UI
         function updateUI() {
+            console.log('Updating UI...');
             document.getElementById('userName').textContent = userData.name || currentUser.email;
             
             // Set user avatar
             const avatarElement = document.getElementById('userAvatar');
             if (userData.photoURL) {
-                avatarElement.innerHTML = `<img src="${userData.photoURL}" style="width: 100%; height: 100%; border-radius: 50%;">`;
+                avatarElement.innerHTML = `<img src="${userData.photoURL}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
             } else {
                 const initials = (userData.name || currentUser.email).charAt(0).toUpperCase();
                 avatarElement.textContent = initials;
@@ -1067,485 +1147,7 @@
             }
         }
 
-        // Tab Navigation
-        function showTab(tabName) {
-            // Update active tab
-            document.querySelectorAll('.nav-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            // Load tab content
-            switch(tabName) {
-                case 'dashboard':
-                    loadDashboardTab();
-                    break;
-                case 'ids':
-                    loadIDsTab();
-                    break;
-                case 'passwords':
-                    loadPasswordsTab();
-                    break;
-                case 'notes':
-                    loadNotesTab();
-                    break;
-                case 'documents':
-                    loadDocumentsTab();
-                    break;
-                case 'backup':
-                    loadBackupTab();
-                    break;
-                case 'premium':
-                    loadPremiumTab();
-                    break;
-            }
-        }
-
-        // Home Button Function
-        function goToHome() {
-            window.location.href = "index.html";
-        }
-
-        // Dashboard Tab
-        async function loadDashboardTab() {
-            const usage = userData.usage || {};
-            const limits = userData.limits || {};
-            
-            const content = `
-                <div class="card">
-                    <h3><i class="fas fa-tachometer-alt"></i> Dashboard Overview</h3>
-                    <p>Welcome back, ${userData.name || 'User'}!</p>
-                    
-                    ${isPremium ? `
-                        <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 15px; border-radius: 10px; color: white; margin: 15px 0;">
-                            <h4><i class="fas fa-crown"></i> Premium Status: Active</h4>
-                            <p>Unlimited storage • Auto Backup • Multi-device Sync</p>
-                        </div>
-                    ` : ''}
-                    
-                    <div style="margin-top: 20px;">
-                        <h4>Storage Usage</h4>
-                        ${Object.keys(usage).map(item => {
-                            const used = usage[item] || 0;
-                            const limit = isPremium ? '∞' : (limits[item] || 0);
-                            const percent = isPremium ? 0 : Math.min((used / limits[item]) * 100, 100);
-                            return `
-                                <div style="margin: 15px 0;">
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span>${item.charAt(0).toUpperCase() + item.slice(1)}</span>
-                                        <span>${used} / ${limit}</span>
-                                    </div>
-                                    ${!isPremium ? `
-                                        <div class="progress-bar">
-                                            <div class="progress" style="width: ${percent}%"></div>
-                                        </div>
-                                    ` : ''}
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                    
-                    <div style="margin-top: 20px;">
-                        <h4>Quick Actions</h4>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 15px;">
-                            <button class="btn btn-primary" onclick="showTab('ids')">
-                                <i class="fas fa-id-card"></i> Add ID
-                            </button>
-                            <button class="btn btn-primary" onclick="showTab('passwords')">
-                                <i class="fas fa-key"></i> Add Password
-                            </button>
-                            <button class="btn btn-primary" onclick="showTab('documents')">
-                                <i class="fas fa-file-upload"></i> Upload File
-                            </button>
-                            <button class="btn btn-success" onclick="createBackup()">
-                                <i class="fas fa-cloud-upload-alt"></i> Backup Now
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('contentArea').innerHTML = content;
-        }
-
-        // IDs Tab
-        async function loadIDsTab() {
-            const content = `
-                <div class="card">
-                    <h3><i class="fas fa-id-card"></i> ID Management</h3>
-                    <p>Stored IDs: ${userData.usage.ids || 0}/${isPremium ? 'Unlimited' : (userData.limits.ids || 5)}</p>
-                    
-                    <div class="form-group">
-                        <label>ID Type</label>
-                        <select class="form-control" id="idType">
-                            <option value="passport">Passport</option>
-                            <option value="driver">Driver's License</option>
-                            <option value="national">National ID</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>ID Number</label>
-                        <input type="text" class="form-control" id="idNumber" placeholder="Enter ID number">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Full Name</label>
-                        <input type="text" class="form-control" id="idName" placeholder="Enter full name">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Expiration Date</label>
-                        <input type="date" class="form-control" id="idExpiry">
-                    </div>
-                    
-                    <button class="btn btn-primary" onclick="saveID()">
-                        <i class="fas fa-save"></i> Save ID
-                    </button>
-                    
-                    <div id="idList" class="item-list" style="margin-top: 20px;"></div>
-                </div>
-            `;
-            
-            document.getElementById('contentArea').innerHTML = content;
-            await loadIDList();
-        }
-
-        // Save ID (Encrypted)
-        async function saveID() {
-            if (!checkLimit('ids')) return;
-            
-            const idType = document.getElementById('idType').value;
-            const idNumber = document.getElementById('idNumber').value;
-            const idName = document.getElementById('idName').value;
-            const idExpiry = document.getElementById('idExpiry').value;
-            
-            if (!idNumber || !idName) {
-                alert('Please fill in all required fields');
-                return;
-            }
-            
-            const idData = {
-                type: idType,
-                number: encryptData(idNumber),
-                name: encryptData(idName),
-                expiry: idExpiry || '',
-                createdAt: new Date().toISOString()
-            };
-            
-            try {
-                await addDoc(collection(db, 'vaults', currentUser.uid, 'ids'), idData);
-                
-                // Update usage
-                await updateUsage('ids', 1);
-                await loadIDList();
-                clearIDForm();
-                
-                alert('ID saved securely!');
-            } catch (error) {
-                console.error('Error saving ID:', error);
-                alert('Failed to save ID: ' + error.message);
-            }
-        }
-
-        // Load ID List
-        async function loadIDList() {
-            try {
-                const idsQuery = query(
-                    collection(db, 'vaults', currentUser.uid, 'ids'),
-                    orderBy('createdAt', 'desc')
-                );
-                
-                const querySnapshot = await getDocs(idsQuery);
-                const idList = document.getElementById('idList');
-                
-                if (!idList) return;
-                
-                if (querySnapshot.empty) {
-                    idList.innerHTML = '<p style="color: #666; text-align: center;">No IDs saved yet</p>';
-                    return;
-                }
-                
-                idList.innerHTML = '';
-                
-                querySnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    const item = document.createElement('li');
-                    item.innerHTML = `
-                        <div>
-                            <strong>${data.type.toUpperCase()}</strong><br>
-                            <small>${decryptData(data.name)}</small><br>
-                            <small style="color: #666;">${data.expiry ? 'Expires: ' + data.expiry : ''}</small>
-                        </div>
-                        <div>
-                            <button class="btn" onclick="copyToClipboard('${data.number}')">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                            <button class="btn btn-danger" onclick="deleteItem('ids', '${docSnap.id}')">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    `;
-                    idList.appendChild(item);
-                });
-            } catch (error) {
-                console.error('Error loading IDs:', error);
-                document.getElementById('idList').innerHTML = '<p style="color: #dc3545;">Error loading IDs</p>';
-            }
-        }
-
-        // Passwords Tab
-        async function loadPasswordsTab() {
-            const content = `
-                <div class="card">
-                    <h3><i class="fas fa-key"></i> Password Manager</h3>
-                    <p>Stored passwords: ${userData.usage.passwords || 0}/${isPremium ? 'Unlimited' : (userData.limits.passwords || 15)}</p>
-                    
-                    <div class="form-group">
-                        <label>Website/Service</label>
-                        <input type="text" class="form-control" id="passwordService" placeholder="e.g., google.com">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Username/Email</label>
-                        <input type="text" class="form-control" id="passwordUsername" placeholder="Enter username">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Password</label>
-                        <div style="display: flex; gap: 10px;">
-                            <input type="password" class="form-control" id="passwordValue" placeholder="Enter password">
-                            <button class="btn" onclick="togglePasswordVisibility('passwordValue')">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="btn" onclick="generatePassword()">
-                                <i class="fas fa-dice"></i> Generate
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Notes (Optional)</label>
-                        <textarea class="form-control" id="passwordNotes" rows="2" placeholder="Additional notes"></textarea>
-                    </div>
-                    
-                    <button class="btn btn-primary" onclick="savePassword()">
-                        <i class="fas fa-save"></i> Save Password
-                    </button>
-                    
-                    <div id="passwordList" class="item-list" style="margin-top: 20px;"></div>
-                </div>
-            `;
-            
-            document.getElementById('contentArea').innerHTML = content;
-            await loadPasswordList();
-        }
-
-        // Save Password (Encrypted)
-        async function savePassword() {
-            if (!checkLimit('passwords')) return;
-            
-            const service = document.getElementById('passwordService').value;
-            const username = document.getElementById('passwordUsername').value;
-            const password = document.getElementById('passwordValue').value;
-            const notes = document.getElementById('passwordNotes').value;
-            
-            if (!service || !username || !password) {
-                alert('Please fill in all required fields');
-                return;
-            }
-            
-            const passwordData = {
-                service: encryptData(service),
-                username: encryptData(username),
-                password: encryptData(password),
-                notes: encryptData(notes || ''),
-                createdAt: new Date().toISOString()
-            };
-            
-            try {
-                await addDoc(collection(db, 'vaults', currentUser.uid, 'passwords'), passwordData);
-                
-                await updateUsage('passwords', 1);
-                await loadPasswordList();
-                clearPasswordForm();
-                
-                alert('Password saved securely!');
-            } catch (error) {
-                console.error('Error saving password:', error);
-                alert('Failed to save password: ' + error.message);
-            }
-        }
-
-        // Load Password List
-        async function loadPasswordList() {
-            try {
-                const passwordsQuery = query(
-                    collection(db, 'vaults', currentUser.uid, 'passwords'),
-                    orderBy('createdAt', 'desc')
-                );
-                
-                const querySnapshot = await getDocs(passwordsQuery);
-                const passwordList = document.getElementById('passwordList');
-                
-                if (!passwordList) return;
-                
-                if (querySnapshot.empty) {
-                    passwordList.innerHTML = '<p style="color: #666; text-align: center;">No passwords saved yet</p>';
-                    return;
-                }
-                
-                passwordList.innerHTML = '';
-                
-                querySnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    const item = document.createElement('li');
-                    item.innerHTML = `
-                        <div>
-                            <strong>${decryptData(data.service)}</strong><br>
-                            <small>${decryptData(data.username)}</small>
-                            ${data.notes ? '<br><small style="color: #666;">' + decryptData(data.notes) + '</small>' : ''}
-                        </div>
-                        <div>
-                            <button class="btn" onclick="copyToClipboard('${data.password}')">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                            <button class="btn btn-danger" onclick="deleteItem('passwords', '${docSnap.id}')">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    `;
-                    passwordList.appendChild(item);
-                });
-            } catch (error) {
-                console.error('Error loading passwords:', error);
-                document.getElementById('passwordList').innerHTML = '<p style="color: #dc3545;">Error loading passwords</p>';
-            }
-        }
-
-        // Encryption Functions
-        function encryptData(data) {
-            const encryptionKey = currentUser.uid + 'SecureVault2024';
-            return CryptoJS.AES.encrypt(data, encryptionKey).toString();
-        }
-
-        function decryptData(encryptedData) {
-            try {
-                const encryptionKey = currentUser.uid + 'SecureVault2024';
-                const bytes = CryptoJS.AES.decrypt(encryptedData, encryptionKey);
-                return bytes.toString(CryptoJS.enc.Utf8) || 'Decryption failed';
-            } catch (error) {
-                return 'Decryption failed';
-            }
-        }
-
-        // Check Limits
-        function checkLimit(type) {
-            if (isPremium) return true;
-            
-            const usage = userData.usage[type] || 0;
-            const limit = userData.limits[type] || 0;
-            
-            if (usage >= limit) {
-                alert(`Free limit reached! You can only store ${limit} ${type}. Upgrade to Premium for unlimited storage.`);
-                showTab('premium');
-                return false;
-            }
-            return true;
-        }
-
-        // Update Usage
-        async function updateUsage(type, change) {
-            const newUsage = (userData.usage[type] || 0) + change;
-            
-            try {
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    [`usage.${type}`]: newUsage
-                });
-                userData.usage[type] = newUsage;
-            } catch (error) {
-                console.error('Error updating usage:', error);
-            }
-        }
-
-        // Inactivity Timer
-        function startInactivityTimer() {
-            clearTimeout(inactivityTimer);
-            inactivityTimer = setTimeout(() => {
-                alert('Session expired due to inactivity');
-                logoutHandler();
-            }, INACTIVITY_TIMEOUT);
-        }
-
-        function resetInactivityTimer() {
-            startInactivityTimer();
-        }
-
-        // Logout Handler
-        async function logoutHandler() {
-            try {
-                await signOut(auth);
-                showAuth();
-            } catch (error) {
-                console.error('Error signing out:', error);
-                alert('Failed to logout');
-            }
-        }
-
-        // Utility Functions
-        function clearIDForm() {
-            document.getElementById('idNumber').value = '';
-            document.getElementById('idName').value = '';
-            document.getElementById('idExpiry').value = '';
-        }
-
-        function clearPasswordForm() {
-            document.getElementById('passwordService').value = '';
-            document.getElementById('passwordUsername').value = '';
-            document.getElementById('passwordValue').value = '';
-            document.getElementById('passwordNotes').value = '';
-        }
-
-        function togglePasswordVisibility(inputId) {
-            const input = document.getElementById(inputId);
-            input.type = input.type === 'password' ? 'text' : 'password';
-        }
-
-        function generatePassword() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-            let password = '';
-            for (let i = 0; i < 16; i++) {
-                password += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            document.getElementById('passwordValue').value = password;
-        }
-
-        async function deleteItem(collectionName, docId) {
-            if (!confirm('Are you sure you want to delete this item?')) return;
-            
-            try {
-                await deleteDoc(doc(db, 'vaults', currentUser.uid, collectionName, docId));
-                
-                // Update usage
-                await updateUsage(collectionName, -1);
-                
-                // Reload current list
-                if (collectionName === 'ids') {
-                    await loadIDList();
-                } else if (collectionName === 'passwords') {
-                    await loadPasswordList();
-                } else if (collectionName === 'notes') {
-                    await loadNotesList();
-                }
-                
-                alert('Item deleted successfully!');
-            } catch (error) {
-                console.error('Error deleting item:', error);
-                alert('Failed to delete item: ' + error.message);
-            }
-        }
-
+        // Check premium status
         async function checkPremiumStatus() {
             try {
                 const premiumDocRef = doc(db, 'premium', currentUser.uid);
@@ -1580,378 +1182,112 @@
             }
         }
 
-        // Copy to clipboard
-        function copyToClipboard(encryptedText) {
-            const decrypted = decryptData(encryptedText);
-            if (decrypted === 'Decryption failed') {
-                alert('Failed to decrypt data');
-                return;
+        // Show/Hide screens
+        function showApp() {
+            console.log('Showing app...');
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('appContainer').style.display = 'block';
+            showTab('dashboard');
+        }
+
+        function showAuth() {
+            console.log('Showing auth screen...');
+            document.getElementById('authScreen').style.display = 'block';
+            document.getElementById('appContainer').style.display = 'none';
+            clearMessages();
+            showAuthForm('login');
+        }
+
+        // Logout
+        async function logout() {
+            console.log('Logging out...');
+            try {
+                await signOut(auth);
+                showAuth();
+            } catch (error) {
+                console.error('Error signing out:', error);
+                showError('Failed to logout');
             }
+        }
+
+        // Home button
+        function goToHome() {
+            window.location.href = "index.html";
+        }
+
+        // Tab navigation
+        function showTab(tabName) {
+            console.log('Showing tab:', tabName);
             
-            navigator.clipboard.writeText(decrypted).then(() => {
-                alert('Copied to clipboard!');
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
-                alert('Failed to copy to clipboard');
+            // Update active tab
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
             });
+            event.target.classList.add('active');
+            
+            // Load tab content
+            switch(tabName) {
+                case 'dashboard':
+                    loadDashboardTab();
+                    break;
+                case 'ids':
+                    loadIDsTab();
+                    break;
+                case 'passwords':
+                    loadPasswordsTab();
+                    break;
+                case 'notes':
+                    loadNotesTab();
+                    break;
+                case 'documents':
+                    loadDocumentsTab();
+                    break;
+                case 'backup':
+                    loadBackupTab();
+                    break;
+                case 'premium':
+                    loadPremiumTab();
+                    break;
+            }
         }
 
-        // Notes Functions
-        async function loadNotesTab() {
+        // Dashboard Tab
+        function loadDashboardTab() {
+            const usage = userData.usage || {};
+            const limits = userData.limits || {};
+            
             const content = `
                 <div class="card">
-                    <h3><i class="fas fa-sticky-note"></i> Secure Notes</h3>
-                    <p>Stored notes: ${userData.usage.notes || 0}/${isPremium ? 'Unlimited' : (userData.limits.notes || 10)}</p>
-                    
-                    <div class="form-group">
-                        <label>Note Title</label>
-                        <input type="text" class="form-control" id="noteTitle" placeholder="Enter title">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Note Content</label>
-                        <textarea class="form-control" id="noteContent" rows="4" placeholder="Enter your secure note"></textarea>
-                    </div>
-                    
-                    <button class="btn btn-primary" onclick="saveNote()">
-                        <i class="fas fa-save"></i> Save Note
-                    </button>
-                    
-                    <div id="notesList" class="item-list" style="margin-top: 20px;"></div>
-                </div>
-            `;
-            
-            document.getElementById('contentArea').innerHTML = content;
-            await loadNotesList();
-        }
-
-        async function saveNote() {
-            if (!checkLimit('notes')) return;
-            
-            const title = document.getElementById('noteTitle').value;
-            const content = document.getElementById('noteContent').value;
-            
-            if (!title || !content) {
-                alert('Please fill in all fields');
-                return;
-            }
-            
-            const noteData = {
-                title: encryptData(title),
-                content: encryptData(content),
-                createdAt: new Date().toISOString()
-            };
-            
-            try {
-                await addDoc(collection(db, 'vaults', currentUser.uid, 'notes'), noteData);
-                await updateUsage('notes', 1);
-                await loadNotesList();
-                
-                document.getElementById('noteTitle').value = '';
-                document.getElementById('noteContent').value = '';
-                
-                alert('Note saved securely!');
-            } catch (error) {
-                console.error('Error saving note:', error);
-                alert('Failed to save note: ' + error.message);
-            }
-        }
-
-        async function loadNotesList() {
-            try {
-                const notesQuery = query(
-                    collection(db, 'vaults', currentUser.uid, 'notes'),
-                    orderBy('createdAt', 'desc')
-                );
-                
-                const querySnapshot = await getDocs(notesQuery);
-                const notesList = document.getElementById('notesList');
-                
-                if (!notesList) return;
-                
-                if (querySnapshot.empty) {
-                    notesList.innerHTML = '<p style="color: #666; text-align: center;">No notes saved yet</p>';
-                    return;
-                }
-                
-                notesList.innerHTML = '';
-                
-                querySnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    const item = document.createElement('li');
-                    item.innerHTML = `
-                        <div>
-                            <strong>${decryptData(data.title)}</strong><br>
-                            <small>${decryptData(data.content).substring(0, 50)}${decryptData(data.content).length > 50 ? '...' : ''}</small>
-                        </div>
-                        <div>
-                            <button class="btn" onclick="viewNote('${docSnap.id}')">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="btn btn-danger" onclick="deleteItem('notes', '${docSnap.id}')">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    `;
-                    notesList.appendChild(item);
-                });
-            } catch (error) {
-                console.error('Error loading notes:', error);
-                document.getElementById('notesList').innerHTML = '<p style="color: #dc3545;">Error loading notes</p>';
-            }
-        }
-
-        async function viewNote(noteId) {
-            try {
-                const noteDoc = await getDoc(doc(db, 'vaults', currentUser.uid, 'notes', noteId));
-                if (noteDoc.exists()) {
-                    const data = noteDoc.data();
-                    alert(`Title: ${decryptData(data.title)}\n\nContent: ${decryptData(data.content)}`);
-                }
-            } catch (error) {
-                console.error('Error viewing note:', error);
-                alert('Failed to load note');
-            }
-        }
-
-        // Documents Tab (Simplified)
-        async function loadDocumentsTab() {
-            const content = `
-                <div class="card">
-                    <h3><i class="fas fa-folder"></i> Document Storage</h3>
-                    <p>Stored documents: ${userData.usage.documents || 0}/${isPremium ? 'Unlimited' : (userData.limits.documents || 5)}</p>
-                    <p>Stored images: ${userData.usage.images || 0}/${isPremium ? 'Unlimited' : (userData.limits.images || 5)}</p>
-                    
-                    <div class="upload-area" id="uploadArea">
-                        <i class="fas fa-cloud-upload-alt" style="font-size: 48px; color: #667eea; margin-bottom: 15px;"></i>
-                        <p>Drag & drop files here or click to browse</p>
-                        <p style="color: #666; font-size: 14px;">
-                            ${isPremium ? 'Premium: up to 2MB per file' : 'Free: Images max 500KB, documents max 1MB'}
-                        </p>
-                        <input type="file" id="fileInput" style="display: none;" multiple onchange="handleFileUpload(event)">
-                    </div>
-                    
-                    <div id="uploadProgress" style="display: none; margin-top: 20px;">
-                        <div class="progress-bar">
-                            <div class="progress" id="uploadProgressBar" style="width: 0%"></div>
-                        </div>
-                        <p id="uploadStatus" style="text-align: center; margin-top: 5px;"></p>
-                    </div>
-                    
-                    <div id="documentsList" style="margin-top: 20px;"></div>
-                </div>
-            `;
-            
-            document.getElementById('contentArea').innerHTML = content;
-            
-            // Setup upload area click
-            document.getElementById('uploadArea').addEventListener('click', () => {
-                document.getElementById('fileInput').click();
-            });
-            
-            await loadDocumentsList();
-        }
-
-        async function handleFileUpload(event) {
-            const files = event.target.files;
-            if (!files.length) return;
-            
-            const uploadProgress = document.getElementById('uploadProgress');
-            const progressBar = document.getElementById('uploadProgressBar');
-            const statusText = document.getElementById('uploadStatus');
-            
-            uploadProgress.style.display = 'block';
-            
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                
-                // Check file type and size
-                const fileType = file.type;
-                const isImage = fileType.startsWith('image/');
-                const fileSizeMB = file.size / (1024 * 1024);
-                
-                if (isImage && !isPremium && fileSizeMB > 0.5) {
-                    alert('Free users can only upload images up to 500KB. Upgrade to Premium for larger files.');
-                    continue;
-                }
-                
-                if (!isPremium && fileSizeMB > 1) {
-                    alert('Free users can only upload files up to 1MB');
-                    continue;
-                }
-                
-                if (isPremium && fileSizeMB > 2) {
-                    alert('Premium users can upload files up to 2MB');
-                    continue;
-                }
-                
-                // Update progress
-                const progress = ((i + 1) / files.length) * 100;
-                progressBar.style.width = `${progress}%`;
-                statusText.textContent = `Uploading ${i + 1} of ${files.length}: ${file.name}`;
-                
-                try {
-                    // Upload to Firebase Storage
-                    const storageRef = ref(storage, `users/${currentUser.uid}/${Date.now()}_${file.name}`);
-                    await uploadBytes(storageRef, file);
-                    const downloadURL = await getDownloadURL(storageRef);
-                    
-                    // Save metadata to Firestore
-                    const fileData = {
-                        name: file.name,
-                        type: fileType,
-                        size: file.size,
-                        url: downloadURL,
-                        isImage: isImage,
-                        createdAt: new Date().toISOString()
-                    };
-                    
-                    await addDoc(collection(db, 'vaults', currentUser.uid, 'documents'), fileData);
-                    
-                    // Update usage
-                    const usageType = isImage ? 'images' : 'documents';
-                    await updateUsage(usageType, 1);
-                    
-                } catch (error) {
-                    console.error('Error uploading file:', error);
-                    alert(`Failed to upload ${file.name}: ${error.message}`);
-                }
-            }
-            
-            // Reset and reload
-            progressBar.style.width = '0%';
-            statusText.textContent = '';
-            uploadProgress.style.display = 'none';
-            event.target.value = '';
-            
-            await loadDocumentsList();
-            alert('Files uploaded successfully!');
-        }
-
-        async function loadDocumentsList() {
-            try {
-                const documentsQuery = query(
-                    collection(db, 'vaults', currentUser.uid, 'documents'),
-                    orderBy('createdAt', 'desc')
-                );
-                
-                const querySnapshot = await getDocs(documentsQuery);
-                const documentsList = document.getElementById('documentsList');
-                
-                if (!documentsList) return;
-                
-                if (querySnapshot.empty) {
-                    documentsList.innerHTML = '<p style="color: #666; text-align: center;">No documents uploaded yet</p>';
-                    return;
-                }
-                
-                documentsList.innerHTML = '';
-                
-                querySnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    const fileSizeKB = Math.round(data.size / 1024);
-                    
-                    const item = document.createElement('div');
-                    item.className = 'file-item';
-                    item.innerHTML = `
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            ${data.isImage ? 
-                                `<i class="fas fa-image" style="color: #4CAF50;"></i>` : 
-                                `<i class="fas fa-file" style="color: #2196F3;"></i>`}
-                            <div>
-                                <div>${data.name}</div>
-                                <small style="color: #666;">${fileSizeKB} KB • ${new Date(data.createdAt).toLocaleDateString()}</small>
-                            </div>
-                        </div>
-                        <div>
-                            <a href="${data.url}" target="_blank" class="btn">
-                                <i class="fas fa-external-link-alt"></i>
-                            </a>
-                            <button class="btn" onclick="downloadFile('${data.url}', '${data.name}')">
-                                <i class="fas fa-download"></i>
-                            </button>
-                            <button class="btn btn-danger" onclick="deleteFile('${docSnap.id}', '${data.url}')">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    `;
-                    documentsList.appendChild(item);
-                });
-            } catch (error) {
-                console.error('Error loading documents:', error);
-                document.getElementById('documentsList').innerHTML = '<p style="color: #dc3545;">Error loading documents</p>';
-            }
-        }
-
-        async function deleteFile(docId, fileUrl) {
-            if (!confirm('Are you sure you want to delete this file?')) return;
-            
-            try {
-                // Delete from Firestore
-                await deleteDoc(doc(db, 'vaults', currentUser.uid, 'documents', docId));
-                
-                // Delete from Storage
-                const fileRef = ref(storage, fileUrl);
-                await deleteObject(fileRef);
-                
-                // Update usage
-                const docRef = doc(db, 'vaults', currentUser.uid, 'documents', docId);
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    const fileData = docSnap.data();
-                    const usageType = fileData.isImage ? 'images' : 'documents';
-                    await updateUsage(usageType, -1);
-                }
-                
-                await loadDocumentsList();
-                alert('File deleted successfully!');
-            } catch (error) {
-                console.error('Error deleting file:', error);
-                alert('Failed to delete file: ' + error.message);
-            }
-        }
-
-        function downloadFile(url, filename) {
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        // Backup Tab
-        function loadBackupTab() {
-            const content = `
-                <div class="card">
-                    <h3><i class="fas fa-cloud-upload-alt"></i> Backup & Restore</h3>
+                    <h3><i class="fas fa-tachometer-alt"></i> Dashboard Overview</h3>
+                    <p>Welcome back, ${userData.name || 'User'}!</p>
                     
                     ${isPremium ? `
-                        <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 15px; border-radius: 10px; color: white; margin-bottom: 20px;">
-                            <h4><i class="fas fa-sync"></i> Automatic Backup Enabled</h4>
-                            <p>Your data is automatically backed up</p>
+                        <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 15px; border-radius: 10px; color: white; margin: 15px 0;">
+                            <h4><i class="fas fa-crown"></i> Premium Status: Active</h4>
+                            <p>Unlimited storage • Auto Backup • Multi-device Sync</p>
                         </div>
-                    ` : `
-                        <div style="background: #fff3cd; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-                            <h4><i class="fas fa-exclamation-triangle"></i> Manual Backup Only</h4>
-                            <p>Free users can manually backup data only</p>
-                        </div>
-                    `}
+                    ` : ''}
                     
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
-                        <button class="btn btn-primary" onclick="createBackup()">
-                            <i class="fas fa-download"></i> Create Backup
-                        </button>
-                        
-                        <button class="btn" onclick="restoreBackup()">
-                            <i class="fas fa-upload"></i> Restore from Backup
-                        </button>
-                        
-                        ${!isPremium ? `
-                            <button class="btn btn-success" onclick="showTab('premium')">
-                                <i class="fas fa-crown"></i> Upgrade for Auto Backup
-                            </button>
-                        ` : ''}
+                    <div style="margin-top: 20px;">
+                        <h4>Storage Usage</h4>
+                        ${Object.keys(usage).map(item => {
+                            const used = usage[item] || 0;
+                            const limit = isPremium ? '∞' : (limits[item] || 0);
+                            const percent = isPremium ? 0 : Math.min((used / limits[item]) * 100, 100);
+                            return `
+                                <div style="margin: 15px 0;">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span>${item.charAt(0).toUpperCase() + item.slice(1)}</span>
+                                        <span>${used} / ${limit}</span>
+                                    </div>
+                                    ${!isPremium ? `
+                                        <div style="width: 100%; height: 10px; background: #e9ecef; border-radius: 5px; overflow: hidden; margin-top: 5px;">
+                                            <div style="height: 100%; background: #28a745; width: ${percent}%; transition: width 0.3s;"></div>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `;
+                        }).join('')}
                     </div>
                 </div>
             `;
@@ -1959,164 +1295,59 @@
             document.getElementById('contentArea').innerHTML = content;
         }
 
-        async function createBackup() {
-            try {
-                // Collect all data
-                const backupData = {
-                    userId: currentUser.uid,
-                    createdAt: new Date().toISOString(),
-                    data: {}
-                };
-                
-                // Get IDs
-                const idsQuery = query(collection(db, 'vaults', currentUser.uid, 'ids'));
-                const idsSnapshot = await getDocs(idsQuery);
-                backupData.data.ids = idsSnapshot.docs.map(doc => doc.data());
-                
-                // Get Passwords
-                const passwordsQuery = query(collection(db, 'vaults', currentUser.uid, 'passwords'));
-                const passwordsSnapshot = await getDocs(passwordsQuery);
-                backupData.data.passwords = passwordsSnapshot.docs.map(doc => doc.data());
-                
-                // Get Notes
-                const notesQuery = query(collection(db, 'vaults', currentUser.uid, 'notes'));
-                const notesSnapshot = await getDocs(notesQuery);
-                backupData.data.notes = notesSnapshot.docs.map(doc => doc.data());
-                
-                // Save backup to Firestore
-                await addDoc(collection(db, 'backups', currentUser.uid, 'history'), backupData);
-                
-                // Update last backup time
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    lastBackup: new Date().toISOString()
-                });
-                
-                alert('Backup created successfully!');
-            } catch (error) {
-                console.error('Error creating backup:', error);
-                alert('Failed to create backup: ' + error.message);
-            }
-        }
-
-        // Premium Tab
-        function loadPremiumTab() {
-            const content = `
+        // Load other tabs (simplified for now)
+        function loadIDsTab() {
+            document.getElementById('contentArea').innerHTML = `
                 <div class="card">
-                    <h3><i class="fas fa-crown"></i> Premium Features</h3>
-                    
-                    ${!isPremium ? `
-                        <div style="background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
-                            <h4 style="color: #333;">Upgrade to Premium!</h4>
-                            <p style="color: #333;">Unlock unlimited storage and advanced features</p>
-                        </div>
-                        
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-                            <div style="background: white; padding: 20px; border-radius: 10px; border: 2px solid #ddd;">
-                                <h4>Monthly Plan</h4>
-                                <h2>$4.99<span style="font-size: 14px; color: #666;">/month</span></h2>
-                                <ul style="margin: 15px 0; color: #666;">
-                                    <li>✓ Unlimited IDs, Passwords, Notes</li>
-                                    <li>✓ Unlimited document storage</li>
-                                    <li>✓ Images up to 2MB</li>
-                                    <li>✓ Automatic Google Drive backup</li>
-                                    <li>✓ Multi-device sync</li>
-                                </ul>
-                                <button class="btn btn-success" style="width: 100%;" onclick="upgradeToPremium('monthly')">
-                                    <i class="fas fa-credit-card"></i> Subscribe Monthly
-                                </button>
-                            </div>
-                            
-                            <div style="background: white; padding: 20px; border-radius: 10px; border: 2px solid #f6d365;">
-                                <div style="background: #f6d365; color: #333; padding: 5px 10px; border-radius: 20px; display: inline-block; margin-bottom: 10px;">
-                                    <small><strong>SAVE 15%</strong></small>
-                                </div>
-                                <h4>Yearly Plan</h4>
-                                <h2>$49.99<span style="font-size: 14px; color: #666;">/year</span></h2>
-                                <ul style="margin: 15px 0; color: #666;">
-                                    <li>✓ All monthly features</li>
-                                    <li>✓ Save 15% with yearly billing</li>
-                                    <li>✓ Priority support</li>
-                                    <li>✓ Early access to new features</li>
-                                </ul>
-                                <button class="btn btn-success" style="width: 100%; background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);" onclick="upgradeToPremium('yearly')">
-                                    <i class="fas fa-crown"></i> Subscribe Yearly
-                                </button>
-                            </div>
-                        </div>
-                    ` : `
-                        <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 20px; border-radius: 10px; color: white; margin-bottom: 20px; text-align: center;">
-                            <h4>🎉 You're a Premium Member!</h4>
-                            <p>Enjoy all premium features</p>
-                        </div>
-                        
-                        <div style="margin-top: 20px;">
-                            <h4>Active Premium Features:</h4>
-                            <ul style="margin: 15px 0; color: #666;">
-                                <li><i class="fas fa-check-circle" style="color: #28a745;"></i> Unlimited storage for all item types</li>
-                                <li><i class="fas fa-check-circle" style="color: #28a745;"></i> Automatic backup</li>
-                                <li><i class="fas fa-check-circle" style="color: #28a745;"></i> Multi-device sync</li>
-                                <li><i class="fas fa-check-circle" style="color: #28a745;"></i> High-quality images (up to 2MB)</li>
-                                <li><i class="fas fa-check-circle" style="color: #28a745;"></i> Priority customer support</li>
-                            </ul>
-                        </div>
-                    `}
+                    <h3><i class="fas fa-id-card"></i> ID Management</h3>
+                    <p>Coming soon...</p>
                 </div>
             `;
-            
-            document.getElementById('contentArea').innerHTML = content;
         }
 
-        async function upgradeToPremium(plan) {
-            if (!confirm(`Upgrade to ${plan} premium plan for ${plan === 'monthly' ? '$4.99/month' : '$49.99/year'}?`)) return;
-            
-            try {
-                // For demo, we'll simulate successful payment
-                const expiryDate = new Date();
-                if (plan === 'monthly') {
-                    expiryDate.setMonth(expiryDate.getMonth() + 1);
-                } else {
-                    expiryDate.setFullYear(expiryDate.getFullYear() + 1);
-                }
-                
-                // Update premium status
-                await setDoc(doc(db, 'premium', currentUser.uid), {
-                    userId: currentUser.uid,
-                    plan: plan,
-                    upgradedAt: new Date().toISOString(),
-                    expiryDate: expiryDate.toISOString(),
-                    isActive: true
-                });
-                
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    isPremium: true,
-                    premiumPlan: plan,
-                    premiumSince: serverTimestamp(),
-                    premiumExpiry: expiryDate.toLocaleDateString()
-                });
-                
-                userData.isPremium = true;
-                isPremium = true;
-                updateUI();
-                
-                alert(`Premium ${plan} plan activated successfully!`);
-                showTab('premium');
-                
-            } catch (error) {
-                console.error('Error upgrading to premium:', error);
-                alert('Failed to upgrade: ' + error.message);
-            }
+        function loadPasswordsTab() {
+            document.getElementById('contentArea').innerHTML = `
+                <div class="card">
+                    <h3><i class="fas fa-key"></i> Password Manager</h3>
+                    <p>Coming soon...</p>
+                </div>
+            `;
         }
 
-        async function restoreBackup() {
-            if (!confirm('This will restore your data from the latest backup. Continue?')) return;
-            
-            try {
-                alert('Backup restoration started...');
-                // Implement restoration logic here
-            } catch (error) {
-                console.error('Error restoring backup:', error);
-                alert('Failed to restore backup: ' + error.message);
-            }
+        function loadNotesTab() {
+            document.getElementById('contentArea').innerHTML = `
+                <div class="card">
+                    <h3><i class="fas fa-sticky-note"></i> Secure Notes</h3>
+                    <p>Coming soon...</p>
+                </div>
+            `;
+        }
+
+        function loadDocumentsTab() {
+            document.getElementById('contentArea').innerHTML = `
+                <div class="card">
+                    <h3><i class="fas fa-folder"></i> Document Storage</h3>
+                    <p>Coming soon...</p>
+                </div>
+            `;
+        }
+
+        function loadBackupTab() {
+            document.getElementById('contentArea').innerHTML = `
+                <div class="card">
+                    <h3><i class="fas fa-cloud-upload-alt"></i> Backup & Restore</h3>
+                    <p>Coming soon...</p>
+                </div>
+            `;
+        }
+
+        function loadPremiumTab() {
+            document.getElementById('contentArea').innerHTML = `
+                <div class="card">
+                    <h3><i class="fas fa-crown"></i> Premium Features</h3>
+                    <p>Coming soon...</p>
+                </div>
+            `;
         }
     </script>
 </body>
