@@ -1408,5 +1408,31 @@
             alert('Settings saved! (This would update Firestore in production)');
         }
     </script>
+
+    <!-- In admin.html, replace the script section with: -->
+<script type="module">
+    // Import from firebase-config.js
+    import { 
+        auth, 
+        db,
+        signInWithEmailAndPassword,
+        signOut,
+        onAuthStateChanged,
+        collection, 
+        doc, 
+        getDoc, 
+        getDocs, 
+        query, 
+        where, 
+        orderBy, 
+        updateDoc, 
+        deleteDoc,
+        addDoc,
+        serverTimestamp
+    } from './firebase-config.js';
+
+    // Rest of your admin.html JavaScript code...
+    // (Keep all your admin authentication and functions here)
+</script>
 </body>
 </html>
