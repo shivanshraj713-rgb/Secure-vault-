@@ -1,8 +1,35 @@
 // firebase-config.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, addDoc, query, where, orderBy, getDocs, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
+import { 
+  getAuth, 
+  GoogleAuthProvider, 
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  sendPasswordResetEmail
+} from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+import { 
+  getFirestore, 
+  collection, 
+  doc, 
+  getDoc, 
+  setDoc, 
+  updateDoc, 
+  addDoc, 
+  query, 
+  where, 
+  orderBy, 
+  getDocs, 
+  deleteDoc, 
+  serverTimestamp 
+} from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+import { 
+  getStorage, 
+  ref, 
+  uploadBytes, 
+  getDownloadURL, 
+  deleteObject 
+} from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
 
 // Your Firebase Configuration
 const firebaseConfig = {
@@ -23,8 +50,16 @@ const storage = getStorage(app);
 const googleProvider = new GoogleAuthProvider();
 
 export { 
-  app, auth, db, storage, googleProvider, 
-  signInWithPopup, collection, doc, getDoc, 
+  app, 
+  auth, 
+  db, 
+  storage, 
+  googleProvider,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  sendPasswordResetEmail,
+  collection, doc, getDoc, 
   setDoc, updateDoc, addDoc, query, where, 
   orderBy, getDocs, deleteDoc, serverTimestamp,
   ref, uploadBytes, getDownloadURL, deleteObject
