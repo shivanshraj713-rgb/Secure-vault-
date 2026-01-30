@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureVault - User Panel</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* All CSS from previous users.html remains the same */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .auth-box {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .logo {
+            width: 100px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .btn-google {
+            background: #4285F4;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        .btn-google:hover {
+            background: #357ae8;
+        }
+
+        .app-container {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            min-height: 90vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .nav-tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .nav-tab.active {
+            border-bottom-color: #667eea;
+            background: white;
+            color: #667eea;
+        }
+
+        .content-area {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .card h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .item-list {
+            list-style: none;
+            margin-top: 10px;
+        }
+
+        .item-list li {
+            padding: 10px;
+            background: white;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .premium-badge {
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            color: #333;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .auth-box {
+                padding: 20px;
+            }
+            
+            .content-area {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .nav-tab {
+                flex: 1;
+                min-width: 120px;
+                text-align: center;
+                padding: 12px 10px;
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .pin-input {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .pin-input input {
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            font-size: 20px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress {
+            height: 100%;
+            background: #28a745;
+            transition: width 0.3s;
+        }
+
+        .upload-area {
+            border: 2px dashed #ddd;
+            padding: 40px;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            border-color: #667eea;
+            background: #f8f9fa;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <!-- Authentication Screen -->
+    <div class="auth-container" id="authScreen">
+        <div class="auth-box">
+            <div class="logo">🔐</div>
+            <h1>SecureVault</h1>
+            <p style="margin-bottom: 30px; color: #666;">Your secure digital vault</p>
+            <button class="btn-google" id="googleSignInBtn">
+                <i class="fab fa-google"></i> Sign in with Google
+            </button>
+            <div id="errorMessage" style="color: #dc3545; margin-top: 15px;"></div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div class="container" id="appContainer">
+        <div class="app-container">
+            <!-- Header -->
+            <div class="header">
+                <h2><i class="fas fa-shield-alt"></i> SecureVault</h2>
+                <div class="user-info">
+                    <img id="userAvatar" class="user-avatar" src="" alt="Avatar">
+                    <div>
+                        <div id="userName"></div>
+                        <div id="userStatus" style="font-size: 12px;"></div>
+                    </div>
+                    <button class="btn btn-danger" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                
+                <!-- Add this button to users.html header -->
+<button class="btn" onclick="goToHome()" style="margin-right: 10px;">
+    <i class="fas fa-home"></i> Home
+</button>
+
+            </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="nav-tabs">
+                <div class="nav-tab active" onclick="showTab('dashboard')">Dashboard</div>
+                <div class="nav-tab" onclick="showTab('ids')">IDs</div>
+                <div class="nav-tab" onclick="showTab('passwords')">Passwords</div>
+                <div class="nav-tab" onclick="showTab('notes')">Notes</div>
+                <div class="nav-tab" onclick="showTab('documents')">Documents</div>
+                <div class="nav-tab" onclick="showTab('backup')">Backup</div>
+                <div class="nav-tab" onclick="showTab('premium')">Premium</div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area" id="contentArea">
+                <!-- Tab content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- PIN Modal -->
+    <div class="modal" id="pinModal">
+        <div class="modal-content">
+            <h3>Enter Security PIN</h3>
+            <p style="color: #666; margin-bottom: 20px;">Enter your 6-digit PIN for extra security</p>
+            <div class="pin-input">
+                <input type="password" maxlength="1" oninput="moveToNext(this, 1)">
+                <input type="password" maxlength="1" oninput="moveToNext(this, 2)">
+                <input type="password" maxlength="1" oninput="moveToNext(this, 3)">
+                <input type="password" maxlength="1" oninput="moveToNext(this, 4)">
+                <input type="password" maxlength="1" oninput="moveToNext(this, 5)">
+                <input type="password" maxlength="1" oninput="moveToNext(this, 6)">
+            </div>
+            <button class="btn btn-primary" onclick="verifyPIN()">Verify</button>
+            <button class="btn" onclick="setupNewPIN()" style="margin-left: 10px;">Setup New PIN</button>
+        </div>
+    </div>
+
+    <!-- Image Preview Modal -->
+    <div class="modal" id="imageModal">
+        <div class="modal-content">
+            <h3>Image Preview</h3>
+            <img id="modalImage" style="width: 100%; max-height: 400px; object-fit: contain;">
+            <button class="btn btn-danger" onclick="closeImageModal()" style="margin-top: 20px;">Close</button>
+        </div>
+    </div>
+
+    <!-- CryptoJS for encryption -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+    <script type="module">
+        // Import Firebase modules
+        import { 
+            auth, db, storage, googleProvider,
+            signInWithPopup, collection, doc, getDoc, 
+            setDoc, updateDoc, addDoc, query, where, 
+            orderBy, getDocs, deleteDoc, serverTimestamp,
+            ref, uploadBytes, getDownloadURL, deleteObject
+        } from './firebase-config.js';
+
+        // Import auth functions
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+
+        // App State
+        let currentUser = null;
+        let userData = null;
+        let isPremium = false;
+        let inactivityTimer;
+        const INACTIVITY_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', initApp);
+
+        async function initApp() {
+            // Setup event listeners
+            document.getElementById('googleSignInBtn').addEventListener('click', signInWithGoogleHandler);
+            document.getElementById('logoutBtn').addEventListener('click', logoutHandler);
+
+            // Check auth state
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    currentUser = user;
+                    await loadUserData();
+                    showApp();
+                    startInactivityTimer();
+                    await checkPremiumStatus();
+                } else {
+                    showAuth();
+                }
+            });
+
+            // Reset inactivity timer on user activity
+            document.addEventListener('mousemove', resetInactivityTimer);
+            document.addEventListener('keypress', resetInactivityTimer);
+        }
+
+        // Google Sign In Handler
+        async function signInWithGoogleHandler() {
+            try {
+                await signInWithPopup(auth, googleProvider);
+            } catch (error) {
+                showError('Authentication failed: ' + error.message);
+            }
+        }
+
+        // Load user data from Firestore
+        async function loadUserData() {
+            try {
+                const userDocRef = doc(db, 'users', currentUser.uid);
+                const userDoc = await getDoc(userDocRef);
+                
+                if (userDoc.exists()) {
+                    userData = userDoc.data();
+                    updateUI();
+                } else {
+                    // Create new user document
+                    userData = {
+                        email: currentUser.email,
+                        name: currentUser.displayName,
+                        photoURL: currentUser.photoURL,
+                        createdAt: serverTimestamp(),
+                        isPremium: false,
+                        limits: {
+                            ids: 5,
+                            passwords: 15,
+                            notes: 10,
+                            documents: 5,
+                            images: 5
+                        },
+                        usage: {
+                            ids: 0,
+                            passwords: 0,
+                            notes: 0,
+                            documents: 0,
+                            images: 0
+                        }
+                    };
+                    
+                    await setDoc(userDocRef, userData);
+                }
+                
+                // Check if PIN is set
+                const pinDocRef = doc(db, 'pins', currentUser.uid);
+                const pinDoc = await getDoc(pinDocRef);
+                if (!pinDoc.exists()) {
+                    showPINModal();
+                }
+                
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                showError('Failed to load user data');
+            }
+        }
+
+        // Show/Hide screens
+        function showApp() {
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('appContainer').style.display = 'block';
+            showTab('dashboard');
+        }
+
+        function showAuth() {
+            document.getElementById('authScreen').style.display = 'flex';
+            document.getElementById('appContainer').style.display = 'none';
+        }
+
+        function updateUI() {
+            document.getElementById('userName').textContent = userData.name || currentUser.email;
+            document.getElementById('userAvatar').src = userData.photoURL || 'https://via.placeholder.com/40';
+            
+            const statusElement = document.getElementById('userStatus');
+            if (userData.isPremium) {
+                statusElement.innerHTML = '<span class="premium-badge">PREMIUM</span>';
+                isPremium = true;
+            } else {
+                statusElement.textContent = 'Free User';
+                isPremium = false;
+            }
+        }
+
+        // Tab Navigation
+        function showTab(tabName) {
+            // Update active tab
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Load tab content
+            const contentArea = document.getElementById('contentArea');
+            
+            switch(tabName) {
+                case 'dashboard':
+                    loadDashboardTab();
+                    break;
+                case 'ids':
+                    loadIDsTab();
+                    break;
+                case 'passwords':
+                    loadPasswordsTab();
+                    break;
+                case 'notes':
+                    loadNotesTab();
+                    break;
+                case 'documents':
+                    loadDocumentsTab();
+                    break;
+                case 'backup':
+                    loadBackupTab();
+                    break;
+                case 'premium':
+                    loadPremiumTab();
+                    break;
+            }
+        }
+
+        // Dashboard Tab
+        async function loadDashboardTab() {
+            const usage = userData.usage || {};
+            const limits = userData.limits || {};
+            
+            const content = `
+                <div class="card">
+                    <h3><i class="fas fa-tachometer-alt"></i> Dashboard Overview</h3>
+                    <p>Welcome back, ${userData.name || 'User'}!</p>
+                    
+                    ${isPremium ? `
+                        <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 15px; border-radius: 10px; color: white; margin: 15px 0;">
+                            <h4><i class="fas fa-crown"></i> Premium Status: Active</h4>
+                            <p>Unlimited storage • Auto Backup • Multi-device Sync</p>
+                        </div>
+                    ` : ''}
+                    
+                    <div style="margin-top: 20px;">
+                        <h4>Storage Usage</h4>
+                        ${Object.keys(usage).map(item => {
+                            const used = usage[item] || 0;
+                            const limit = isPremium ? '∞' : (limits[item] || 0);
+                            const percent = isPremium ? 0 : Math.min((used / limits[item]) * 100, 100);
+                            return `
+                                <div style="margin: 15px 0;">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span>${item.charAt(0).toUpperCase() + item.slice(1)}</span>
+                                        <span>${used} / ${limit}</span>
+                                    </div>
+                                    ${!isPremium ? `
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: ${percent}%"></div>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <h4>Quick Actions</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 15px;">
+                            <button class="btn btn-primary" onclick="showTab('ids')">
+                                <i class="fas fa-id-card"></i> Add ID
+                            </button>
+                            <button class="btn btn-primary" onclick="showTab('passwords')">
+                                <i class="fas fa-key"></i> Add Password
+                            </button>
+                            <button class="btn btn-primary" onclick="showTab('documents')">
+                                <i class="fas fa-file-upload"></i> Upload File
+                            </button>
+                            <button class="btn btn-success" onclick="createBackup()">
+                                <i class="fas fa-cloud-upload-alt"></i> Backup Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = content;
+        }
+
+        // IDs Tab
+        async function loadIDsTab() {
+            const content = `
+                <div class="card">
+                    <h3><i class="fas fa-id-card"></i> ID Management</h3>
+                    <p>Stored IDs: ${userData.usage.ids || 0}/${isPremium ? 'Unlimited' : (userData.limits.ids || 5)}</p>
+                    
+                    <div class="form-group">
+                        <label>ID Type</label>
+                        <select class="form-control" id="idType">
+                            <option value="passport">Passport</option>
+                            <option value="driver">Driver's License</option>
+                            <option value="national">National ID</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>ID Number</label>
+                        <input type="text" class="form-control" id="idNumber" placeholder="Enter ID number">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" class="form-control" id="idName" placeholder="Enter full name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Expiration Date</label>
+                        <input type="date" class="form-control" id="idExpiry">
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="saveID()">
+                        <i class="fas fa-save"></i> Save ID
+                    </button>
+                    
+                    <div id="idList" class="item-list" style="margin-top: 20px;"></div>
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = content;
+            await loadIDList();
+        }
+
+        // Save ID (Encrypted)
+        async function saveID() {
+            if (!checkLimit('ids')) return;
+            
+            const idType = document.getElementById('idType').value;
+            const idNumber = document.getElementById('idNumber').value;
+            const idName = document.getElementById('idName').value;
+            const idExpiry = document.getElementById('idExpiry').value;
+            
+            if (!idNumber || !idName) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            const idData = {
+                type: idType,
+                number: encryptData(idNumber),
+                name: encryptData(idName),
+                expiry: idExpiry || '',
+                createdAt: new Date().toISOString()
+            };
+            
+            try {
+                await addDoc(collection(db, 'vaults', currentUser.uid, 'ids'), idData);
+                
+                // Update usage
+                await updateUsage('ids', 1);
+                await loadIDList();
+                clearIDForm();
+                
+                alert('ID saved securely!');
+            } catch (error) {
+                console.error('Error saving ID:', error);
+                alert('Failed to save ID: ' + error.message);
+            }
+        }
+
+        // Load ID List
+        async function loadIDList() {
+            try {
+                const idsQuery = query(
+                    collection(db, 'vaults', currentUser.uid, 'ids'),
+                    orderBy('createdAt', 'desc')
+                );
+                
+                const querySnapshot = await getDocs(idsQuery);
+                const idList = document.getElementById('idList');
+                
+                if (!idList) return;
+                
+                if (querySnapshot.empty) {
+                    idList.innerHTML = '<p style="color: #666; text-align: center;">No IDs saved yet</p>';
+                    return;
+                }
+                
+                idList.innerHTML = '';
+                
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const item = document.createElement('li');
+                    item.innerHTML = `
+                        <div>
+                            <strong>${data.type.toUpperCase()}</strong><br>
+                            <small>${decryptData(data.name)}</small><br>
+                            <small style="color: #666;">${data.expiry ? 'Expires: ' + data.expiry : ''}</small>
+                        </div>
+                        <div>
+                            <button class="btn" onclick="copyToClipboard('${data.number}')">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="btn btn-danger" onclick="deleteItem('ids', '${docSnap.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    idList.appendChild(item);
+                });
+            } catch (error) {
+                console.error('Error loading IDs:', error);
+                document.getElementById('idList').innerHTML = '<p style="color: #dc3545;">Error loading IDs</p>';
+            }
+        }
+
+        // Passwords Tab
+        async function loadPasswordsTab() {
+            const content = `
+                <div class="card">
+                    <h3><i class="fas fa-key"></i> Password Manager</h3>
+                    <p>Stored passwords: ${userData.usage.passwords || 0}/${isPremium ? 'Unlimited' : (userData.limits.passwords || 15)}</p>
+                    
+                    <div class="form-group">
+                        <label>Website/Service</label>
+                        <input type="text" class="form-control" id="passwordService" placeholder="e.g., google.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Username/Email</label>
+                        <input type="text" class="form-control" id="passwordUsername" placeholder="Enter username">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Password</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="password" class="form-control" id="passwordValue" placeholder="Enter password">
+                            <button class="btn" onclick="togglePasswordVisibility('passwordValue')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn" onclick="generatePassword()">
+                                <i class="fas fa-dice"></i> Generate
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Notes (Optional)</label>
+                        <textarea class="form-control" id="passwordNotes" rows="2" placeholder="Additional notes"></textarea>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="savePassword()">
+                        <i class="fas fa-save"></i> Save Password
+                    </button>
+                    
+                    <div id="passwordList" class="item-list" style="margin-top: 20px;"></div>
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = content;
+            await loadPasswordList();
+        }
+
+        // Save Password (Encrypted)
+        async function savePassword() {
+            if (!checkLimit('passwords')) return;
+            
+            const service = document.getElementById('passwordService').value;
+            const username = document.getElementById('passwordUsername').value;
+            const password = document.getElementById('passwordValue').value;
+            const notes = document.getElementById('passwordNotes').value;
+            
+            if (!service || !username || !password) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            const passwordData = {
+                service: encryptData(service),
+                username: encryptData(username),
+                password: encryptData(password),
+                notes: encryptData(notes || ''),
+                createdAt: new Date().toISOString()
+            };
+            
+            try {
+                await addDoc(collection(db, 'vaults', currentUser.uid, 'passwords'), passwordData);
+                
+                await updateUsage('passwords', 1);
+                await loadPasswordList();
+                clearPasswordForm();
+                
+                alert('Password saved securely!');
+            } catch (error) {
+                console.error('Error saving password:', error);
+                alert('Failed to save password: ' + error.message);
+            }
+        }
+
+        // Load Password List
+        async function loadPasswordList() {
+            try {
+                const passwordsQuery = query(
+                    collection(db, 'vaults', currentUser.uid, 'passwords'),
+                    orderBy('createdAt', 'desc')
+                );
+                
+                const querySnapshot = await getDocs(passwordsQuery);
+                const passwordList = document.getElementById('passwordList');
+                
+                if (!passwordList) return;
+                
+                if (querySnapshot.empty) {
+                    passwordList.innerHTML = '<p style="color: #666; text-align: center;">No passwords saved yet</p>';
+                    return;
+                }
+                
+                passwordList.innerHTML = '';
+                
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const item = document.createElement('li');
+                    item.innerHTML = `
+                        <div>
+                            <strong>${decryptData(data.service)}</strong><br>
+                            <small>${decryptData(data.username)}</small>
+                            ${data.notes ? '<br><small style="color: #666;">' + decryptData(data.notes) + '</small>' : ''}
+                        </div>
+                        <div>
+                            <button class="btn" onclick="copyToClipboard('${data.password}')">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="btn btn-danger" onclick="deleteItem('passwords', '${docSnap.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    passwordList.appendChild(item);
+                });
+            } catch (error) {
+                console.error('Error loading passwords:', error);
+                document.getElementById('passwordList').innerHTML = '<p style="color: #dc3545;">Error loading passwords</p>';
+            }
+        }
+
+        // Notes Tab
+        async function loadNotesTab() {
+            const content = `
+                <div class="card">
+                    <h3><i class="fas fa-sticky-note"></i> Secure Notes</h3>
+                    <p>Stored notes: ${userData.usage.notes || 0}/${isPremium ? 'Unlimited' : (userData.limits.notes || 10)}</p>
+                    
+                    <div class="form-group">
+                        <label>Note Title</label>
+                        <input type="text" class="form-control" id="noteTitle" placeholder="Enter title">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Note Content</label>
+                        <textarea class="form-control" id="noteContent" rows="4" placeholder="Enter your secure note"></textarea>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="saveNote()">
+                        <i class="fas fa-save"></i> Save Note
+                    </button>
+                    
+                    <div id="notesList" class="item-list" style="margin-top: 20px;"></div>
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = content;
+            await loadNotesList();
+        }
+
+        // Documents Tab
+        async function loadDocumentsTab() {
+            const content = `
+                <div class="card">
+                    <h3><i class="fas fa-folder"></i> Document Storage</h3>
+                    <p>Stored documents: ${userData.usage.documents || 0}/${isPremium ? 'Unlimited' : (userData.limits.documents || 5)}</p>
+                    <p>Stored images: ${userData.usage.images || 0}/${isPremium ? 'Unlimited' : (userData.limits.images || 5)}</p>
+                    
+                    <div class="upload-area" id="uploadArea">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 48px; color: #667eea; margin-bottom: 15px;"></i>
+                        <p>Drag & drop files here or click to browse</p>
+                        <p style="color: #666; font-size: 14px;">
+                            ${isPremium ? 'Premium: up to 2MB per file' : 'Free: Images max 480p, compressed'}
+                        </p>
+                        <input type="file" id="fileInput" style="display: none;" multiple onchange="handleFileUpload(event)">
+                    </div>
+                    
+                    <div id="uploadProgress" style="display: none; margin-top: 20px;">
+                        <div class="progress-bar">
+                            <div class="progress" id="uploadProgressBar" style="width: 0%"></div>
+                        </div>
+                        <p id="uploadStatus" style="text-align: center; margin-top: 5px;"></p>
+                    </div>
+                    
+                    <div id="documentsList" style="margin-top: 20px;"></div>
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = content;
+            
+            // Setup upload area click
+            document.getElementById('uploadArea').addEventListener('click', () => {
+                document.getElementById('fileInput').click();
+            });
+            
+            await loadDocumentsList();
+        }
+
+        // Handle File Upload
+        async function handleFileUpload(event) {
+            const files = event.target.files;
+            if (!files.length) return;
+            
+            const uploadProgress = document.getElementById('uploadProgress');
+            const progressBar = document.getElementById('uploadProgressBar');
+            const statusText = document.getElementById('uploadStatus');
+            
+            uploadProgress.style.display = 'block';
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                
+                // Check file type and size
+                const fileType = file.type;
+                const isImage = fileType.startsWith('image/');
+                const fileSizeMB = file.size / (1024 * 1024);
+                
+                if (isImage && !isPremium && fileSizeMB > 0.5) { // 500KB limit for free users
+                    alert('Free users can only upload images up to 500KB. Upgrade to Premium for larger files.');
+                    continue;
+                }
+                
+                if (!isPremium && fileSizeMB > 1) {
+                    alert('Free users can only upload files up to 1MB');
+                    continue;
+                }
+                
+                if (isPremium && fileSizeMB > 2) {
+                    alert('Premium users can upload files up to 2MB');
+                    continue;
+                }
+                
+                // Update progress
+                const progress = ((i + 1) / files.length) * 100;
+                progressBar.style.width = `${progress}%`;
+                statusText.textContent = `Uploading ${i + 1} of ${files.length}: ${file.name}`;
+                
+                try {
+                    // Upload to Firebase Storage
+                    const storageRef = ref(storage, `users/${currentUser.uid}/${Date.now()}_${file.name}`);
+                    await uploadBytes(storageRef, file);
+                    const downloadURL = await getDownloadURL(storageRef);
+                    
+                    // Save metadata to Firestore
+                    const fileData = {
+                        name: file.name,
+                        type: fileType,
+                        size: file.size,
+                        url: downloadURL,
+                        isImage: isImage,
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    await addDoc(collection(db, 'vaults', currentUser.uid, 'documents'), fileData);
+                    
+                    // Update usage
+                    const usageType = isImage ? 'images' : 'documents';
+                    await updateUsage(usageType, 1);
+                    
+                } catch (error) {
+                    console.error('Error uploading file:', error);
+                    alert(`Failed to upload ${file.name}: ${error.message}`);
+                }
+            }
+            
+            // Reset and reload
+            progressBar.style.width = '0%';
+            statusText.textContent = '';
+            uploadProgress.style.display = 'none';
+            event.target.value = '';
+            
+            await loadDocumentsList();
+            alert('Files uploaded successfully!');
+        }
+
+        // Load Documents List
+        async function loadDocumentsList() {
+            try {
+                const documentsQuery = query(
+                    collection(db, 'vaults', currentUser.uid, 'documents'),
+                    orderBy('createdAt', 'desc')
+                );
+                
+                const querySnapshot = await getDocs(documentsQuery);
+                const documentsList = document.getElementById('documentsList');
+                
+                if (!documentsList) return;
+                
+                if (querySnapshot.empty) {
+                    documentsList.innerHTML = '<p style="color: #666; text-align: center;">No documents uploaded yet</p>';
+                    return;
+                }
+                
+                documentsList.innerHTML = '';
+                
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const fileSizeKB = Math.round(data.size / 1024);
+                    
+                    const item = document.createElement('div');
+                    item.className = 'file-item';
+                    item.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            ${data.isImage ? 
+                                `<i class="fas fa-image" style="color: #4CAF50;"></i>` : 
+                                `<i class="fas fa-file" style="color: #2196F3;"></i>`}
+                            <div>
+                                <div>${data.name}</div>
+                                <small style="color: #666;">${fileSizeKB} KB • ${new Date(data.createdAt).toLocaleDateString()}</small>
+                            </div>
+                        </div>
+                        <div>
+                            ${data.isImage ? 
+                                `<button class="btn" onclick="previewImage('${data.url}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>` : ''}
+                            <button class="btn" onclick="downloadFile('${data.url}', '${data.name}')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <button class="btn btn-danger" onclick="deleteFile('${docSnap.id}', '${data.url}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    documentsList.appendChild(item);
+                });
+            } catch (error) {
+                console.error('Error loading documents:', error);
+                document.getElementById('documentsList').innerHTML = '<p style="color: #dc3545;">Error loading documents</p>';
+            }
+        }
+
+        // Backup Tab
+        function loadBackupTab() {
+            const content = `
+                <div class="card">
+                    <h3><i class="fas fa-cloud-upload-alt"></i> Backup & Restore</h3>
+                    
+                    ${isPremium ? `
+                        <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 15px; border-radius: 10px; color: white; margin-bottom: 20px;">
+                            <h4><i class="fas fa-sync"></i> Automatic Backup Enabled</h4>
+                            <p>Your data is automatically backed up to Google Drive</p>
+                        </div>
+                    ` : `
+                        <div style="background: #fff3cd; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                            <h4><i class="fas fa-exclamation-triangle"></i> Manual Backup Only</h4>
+                            <p>Free users can manually backup text and compressed images only</p>
+                        </div>
+                    `}
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
+                        <button class="btn btn-primary" onclick="createBackup()">
+                            <i class="fas fa-download"></i> Create Backup
+                        </button>
+                        
+                        <button class="btn" onclick="restoreBackup()">
+                            <i class="fas fa-upload"></i> Restore from Backup
+                        </button>
+                        
+                        ${!isPremium ? `
+                            <button class="btn btn-success" onclick="showTab('premium')">
+                                <i class="fas fa-crown"></i> Upgrade for Auto Backup
+                            </button>
+                        ` : ''}
+                    </div>
+                    
+                    <div id="backupInfo" style="margin-top: 20px;">
+                        <h4>Backup Details</h4>
+                        <ul style="color: #666;">
+                            <li>Backup includes all IDs, passwords, notes, and document metadata</li>
+                            ${isPremium ? 
+                                '<li>Premium: Full quality images and automatic backup' : 
+                                '<li>Free: Compressed images only, manual backup required'}
+                            </li>
+                            <li>Backup files are encrypted client-side</li>
+                            <li>Last backup: <span id="lastBackupTime">Never</span></li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = content;
+        }
+
+        // Premium Tab
+        function loadPremiumTab() {
+            const content = `
+                <div class="card">
+                    <h3><i class="fas fa-crown"></i> Premium Features</h3>
+                    
+                    ${!isPremium ? `
+                        <div style="background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
+                            <h4 style="color: #333;">Upgrade to Premium!</h4>
+                            <p style="color: #333;">Unlock unlimited storage and advanced features</p>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                            <div style="background: white; padding: 20px; border-radius: 10px; border: 2px solid #ddd;">
+                                <h4>Monthly Plan</h4>
+                                <h2>$4.99<span style="font-size: 14px; color: #666;">/month</span></h2>
+                                <ul style="margin: 15px 0; color: #666;">
+                                    <li>✓ Unlimited IDs, Passwords, Notes</li>
+                                    <li>✓ Unlimited document storage</li>
+                                    <li>✓ Images up to 2MB</li>
+                                    <li>✓ Automatic Google Drive backup</li>
+                                    <li>✓ Multi-device sync</li>
+                                </ul>
+                                <button class="btn btn-success" style="width: 100%;" onclick="upgradeToPremium('monthly')">
+                                    <i class="fas fa-credit-card"></i> Subscribe Monthly
+                                </button>
+                            </div>
+                            
+                            <div style="background: white; padding: 20px; border-radius: 10px; border: 2px solid #f6d365;">
+                                <div style="background: #f6d365; color: #333; padding: 5px 10px; border-radius: 20px; display: inline-block; margin-bottom: 10px;">
+                                    <small><strong>SAVE 15%</strong></small>
+                                </div>
+                                <h4>Yearly Plan</h4>
+                                <h2>$49.99<span style="font-size: 14px; color: #666;">/year</span></h2>
+                                <ul style="margin: 15px 0; color: #666;">
+                                    <li>✓ All monthly features</li>
+                                    <li>✓ Save 15% with yearly billing</li>
+                                    <li>✓ Priority support</li>
+                                    <li>✓ Early access to new features</li>
+                                </ul>
+                                <button class="btn btn-success" style="width: 100%; background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);" onclick="upgradeToPremium('yearly')">
+                                    <i class="fas fa-crown"></i> Subscribe Yearly
+                                </button>
+                            </div>
+                        </div>
+                    ` : `
+                        <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 20px; border-radius: 10px; color: white; margin-bottom: 20px; text-align: center;">
+                            <h4>🎉 You're a Premium Member!</h4>
+                            <p>Enjoy all premium features</p>
+                        </div>
+                        
+                        <div style="margin-top: 20px;">
+                            <h4>Active Premium Features:</h4>
+                            <ul style="margin: 15px 0; color: #666;">
+                                <li><i class="fas fa-check-circle" style="color: #28a745;"></i> Unlimited storage for all item types</li>
+                                <li><i class="fas fa-check-circle" style="color: #28a745;"></i> Automatic Google Drive backup</li>
+                                <li><i class="fas fa-check-circle" style="color: #28a745;"></i> Multi-device sync</li>
+                                <li><i class="fas fa-check-circle" style="color: #28a745;"></i> High-quality images (up to 2MB)</li>
+                                <li><i class="fas fa-check-circle" style="color: #28a745;"></i> Priority customer support</li>
+                            </ul>
+                            
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-top: 20px;">
+                                <h4>Subscription Details</h4>
+                                <p>Plan: ${userData.premiumPlan || 'Monthly'}</p>
+                                <p>Status: <span style="color: #28a745;">Active</span></p>
+                                ${userData.premiumExpiry ? `<p>Next billing: ${userData.premiumExpiry}</p>` : ''}
+                            </div>
+                        </div>
+                    `}
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = content;
+        }
+
+        // Encryption Functions
+        function encryptData(data) {
+            const encryptionKey = currentUser.uid + 'SecureVault2024';
+            return CryptoJS.AES.encrypt(data, encryptionKey).toString();
+        }
+
+        function decryptData(encryptedData) {
+            try {
+                const encryptionKey = currentUser.uid + 'SecureVault2024';
+                const bytes = CryptoJS.AES.decrypt(encryptedData, encryptionKey);
+                return bytes.toString(CryptoJS.enc.Utf8) || 'Decryption failed';
+            } catch (error) {
+                return 'Decryption failed';
+            }
+        }
+
+        // Check Limits
+        function checkLimit(type) {
+            if (isPremium) return true;
+            
+            const usage = userData.usage[type] || 0;
+            const limit = userData.limits[type] || 0;
+            
+            if (usage >= limit) {
+                alert(`Free limit reached! You can only store ${limit} ${type}. Upgrade to Premium for unlimited storage.`);
+                showTab('premium');
+                return false;
+            }
+            return true;
+        }
+
+        // Update Usage
+        async function updateUsage(type, change) {
+            const newUsage = (userData.usage[type] || 0) + change;
+            
+            try {
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    [`usage.${type}`]: newUsage
+                });
+                userData.usage[type] = newUsage;
+            } catch (error) {
+                console.error('Error updating usage:', error);
+            }
+        }
+
+        // Inactivity Timer
+        function startInactivityTimer() {
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(() => {
+                alert('Session expired due to inactivity');
+                logoutHandler();
+            }, INACTIVITY_TIMEOUT);
+        }
+
+        function resetInactivityTimer() {
+            startInactivityTimer();
+        }
+
+        // Logout Handler
+        async function logoutHandler() {
+            try {
+                await signOut(auth);
+                showAuth();
+            } catch (error) {
+                console.error('Error signing out:', error);
+            }
+        }
+
+        // Show Error
+        function showError(message) {
+            const errorElement = document.getElementById('errorMessage');
+            if (errorElement) {
+                errorElement.textContent = message;
+                setTimeout(() => {
+                    errorElement.textContent = '';
+                }, 5000);
+            }
+        }
+
+        // PIN Functions
+        function showPINModal() {
+            document.getElementById('pinModal').style.display = 'flex';
+        }
+
+        async function verifyPIN() {
+            // Get PIN from inputs
+            const pinInputs = document.querySelectorAll('.pin-input input');
+            let pin = '';
+            pinInputs.forEach(input => pin += input.value);
+            
+            if (pin.length !== 6) {
+                alert('Please enter a 6-digit PIN');
+                return;
+            }
+            
+            try {
+                // Save PIN to Firestore (encrypted)
+                const encryptedPIN = encryptData(pin);
+                await setDoc(doc(db, 'pins', currentUser.uid), {
+                    pin: encryptedPIN,
+                    createdAt: serverTimestamp()
+                });
+                
+                document.getElementById('pinModal').style.display = 'none';
+                alert('PIN setup complete!');
+            } catch (error) {
+                console.error('Error saving PIN:', error);
+                alert('Failed to save PIN');
+            }
+        }
+
+        function setupNewPIN() {
+            // Clear inputs
+            const pinInputs = document.querySelectorAll('.pin-input input');
+            pinInputs.forEach(input => input.value = '');
+        }
+
+        function moveToNext(input, next) {
+            if (input.value.length === 1) {
+                const nextInput = input.parentElement.children[next];
+                if (nextInput) nextInput.focus();
+            }
+        }
+
+        // Utility Functions
+        function clearIDForm() {
+            document.getElementById('idNumber').value = '';
+            document.getElementById('idName').value = '';
+            document.getElementById('idExpiry').value = '';
+        }
+
+        function clearPasswordForm() {
+            document.getElementById('passwordService').value = '';
+            document.getElementById('passwordUsername').value = '';
+            document.getElementById('passwordValue').value = '';
+            document.getElementById('passwordNotes').value = '';
+        }
+
+        function togglePasswordVisibility(inputId) {
+            const input = document.getElementById(inputId);
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        function generatePassword() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+            let password = '';
+            for (let i = 0; i < 16; i++) {
+                password += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('passwordValue').value = password;
+        }
+
+        async function deleteItem(collectionName, docId) {
+            if (!confirm('Are you sure you want to delete this item?')) return;
+            
+            try {
+                await deleteDoc(doc(db, 'vaults', currentUser.uid, collectionName, docId));
+                
+                // Update usage
+                await updateUsage(collectionName, -1);
+                
+                // Reload current list
+                if (collectionName === 'ids') {
+                    await loadIDList();
+                } else if (collectionName === 'passwords') {
+                    await loadPasswordList();
+                } else if (collectionName === 'notes') {
+                    await loadNotesList();
+                }
+                
+                alert('Item deleted successfully!');
+            } catch (error) {
+                console.error('Error deleting item:', error);
+                alert('Failed to delete item: ' + error.message);
+            }
+        }
+
+        async function deleteFile(docId, fileUrl) {
+            if (!confirm('Are you sure you want to delete this file?')) return;
+            
+            try {
+                // Delete from Firestore
+                await deleteDoc(doc(db, 'vaults', currentUser.uid, 'documents', docId));
+                
+                // Delete from Storage
+                const fileRef = ref(storage, fileUrl);
+                await deleteObject(fileRef);
+                
+                // Determine file type and update usage
+                const docRef = doc(db, 'vaults', currentUser.uid, 'documents', docId);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const fileData = docSnap.data();
+                    const usageType = fileData.isImage ? 'images' : 'documents';
+                    await updateUsage(usageType, -1);
+                }
+                
+                await loadDocumentsList();
+                alert('File deleted successfully!');
+            } catch (error) {
+                console.error('Error deleting file:', error);
+                alert('Failed to delete file: ' + error.message);
+            }
+        }
+
+        async function checkPremiumStatus() {
+            try {
+                const premiumDocRef = doc(db, 'premium', currentUser.uid);
+                const premiumDoc = await getDoc(premiumDocRef);
+                
+                if (premiumDoc.exists()) {
+                    const premiumData = premiumDoc.data();
+                    const expiryDate = new Date(premiumData.expiryDate);
+                    
+                    if (expiryDate > new Date()) {
+                        isPremium = true;
+                        userData.isPremium = true;
+                        await updateDoc(doc(db, 'users', currentUser.uid), {
+                            isPremium: true,
+                            premiumPlan: premiumData.plan,
+                            premiumExpiry: expiryDate.toLocaleDateString()
+                        });
+                        updateUI();
+                    } else {
+                        // Premium expired
+                        await updateDoc(doc(db, 'users', currentUser.uid), {
+                            isPremium: false
+                        });
+                        await deleteDoc(premiumDocRef);
+                        isPremium = false;
+                        userData.isPremium = false;
+                        updateUI();
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking premium status:', error);
+            }
+        }
+
+        // Backup Functions
+        async function createBackup() {
+            try {
+                // Collect all data
+                const backupData = {
+                    userId: currentUser.uid,
+                    createdAt: new Date().toISOString(),
+                    data: {}
+                };
+                
+                // Get IDs
+                const idsQuery = query(collection(db, 'vaults', currentUser.uid, 'ids'));
+                const idsSnapshot = await getDocs(idsQuery);
+                backupData.data.ids = idsSnapshot.docs.map(doc => doc.data());
+                
+                // Get Passwords
+                const passwordsQuery = query(collection(db, 'vaults', currentUser.uid, 'passwords'));
+                const passwordsSnapshot = await getDocs(passwordsQuery);
+                backupData.data.passwords = passwordsSnapshot.docs.map(doc => doc.data());
+                
+                // Get Notes
+                const notesQuery = query(collection(db, 'vaults', currentUser.uid, 'notes'));
+                const notesSnapshot = await getDocs(notesQuery);
+                backupData.data.notes = notesSnapshot.docs.map(doc => doc.data());
+                
+                // Save backup to Firestore
+                await addDoc(collection(db, 'backups', currentUser.uid, 'history'), backupData);
+                
+                // Update last backup time
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    lastBackup: new Date().toISOString()
+                });
+                
+                alert('Backup created successfully!');
+            } catch (error) {
+                console.error('Error creating backup:', error);
+                alert('Failed to create backup: ' + error.message);
+            }
+        }
+
+        async function restoreBackup() {
+            if (!confirm('This will restore your data from the latest backup. Continue?')) return;
+            
+            try {
+                const backupsQuery = query(
+                    collection(db, 'backups', currentUser.uid, 'history'),
+                    orderBy('createdAt', 'desc'),
+                    limit(1)
+                );
+                
+                const backupsSnapshot = await getDocs(backupsQuery);
+                
+                if (backupsSnapshot.empty) {
+                    alert('No backup found');
+                    return;
+                }
+                
+                const backupData = backupsSnapshot.docs[0].data();
+                alert('Backup restoration started...');
+                // Implement restoration logic here
+                
+            } catch (error) {
+                console.error('Error restoring backup:', error);
+                alert('Failed to restore backup: ' + error.message);
+            }
+        }
+
+        // Upgrade to Premium (Mock Payment)
+        async function upgradeToPremium(plan) {
+            if (!confirm(`Upgrade to ${plan} premium plan for ${plan === 'monthly' ? '$4.99/month' : '$49.99/year'}?`)) return;
+            
+            try {
+                // In production, integrate with Stripe/Razorpay
+                // For demo, we'll simulate successful payment
+                
+                const expiryDate = new Date();
+                if (plan === 'monthly') {
+                    expiryDate.setMonth(expiryDate.getMonth() + 1);
+                } else {
+                    expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+                }
+                
+                // Update premium status
+                await setDoc(doc(db, 'premium', currentUser.uid), {
+                    userId: currentUser.uid,
+                    plan: plan,
+                    upgradedAt: new Date().toISOString(),
+                    expiryDate: expiryDate.toISOString(),
+                    isActive: true
+                });
+                
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    isPremium: true,
+                    premiumPlan: plan,
+                    premiumSince: serverTimestamp(),
+                    premiumExpiry: expiryDate.toLocaleDateString()
+                });
+                
+                userData.isPremium = true;
+                isPremium = true;
+                updateUI();
+                
+                alert(`Premium ${plan} plan activated successfully!`);
+                showTab('premium');
+                
+            } catch (error) {
+                console.error('Error upgrading to premium:', error);
+                alert('Failed to upgrade: ' + error.message);
+            }
+        }
+
+        // File Functions
+        function previewImage(url) {
+            document.getElementById('modalImage').src = url;
+            document.getElementById('imageModal').style.display = 'flex';
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        function downloadFile(url, filename) {
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function copyToClipboard(encryptedText) {
+            const decrypted = decryptData(encryptedText);
+            if (decrypted === 'Decryption failed') {
+                alert('Failed to decrypt data');
+                return;
+            }
+            
+            navigator.clipboard.writeText(decrypted).then(() => {
+                alert('Copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                alert('Failed to copy to clipboard');
+            });
+        }
+
+        // Notes Functions
+        async function saveNote() {
+            if (!checkLimit('notes')) return;
+            
+            const title = document.getElementById('noteTitle').value;
+            const content = document.getElementById('noteContent').value;
+            
+            if (!title || !content) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            const noteData = {
+                title: encryptData(title),
+                content: encryptData(content),
+                createdAt: new Date().toISOString()
+            };
+            
+            try {
+                await addDoc(collection(db, 'vaults', currentUser.uid, 'notes'), noteData);
+                await updateUsage('notes', 1);
+                await loadNotesList();
+                
+                document.getElementById('noteTitle').value = '';
+                document.getElementById('noteContent').value = '';
+                
+                alert('Note saved securely!');
+            } catch (error) {
+                console.error('Error saving note:', error);
+                alert('Failed to save note: ' + error.message);
+            }
+        }
+
+        async function loadNotesList() {
+            try {
+                const notesQuery = query(
+                    collection(db, 'vaults', currentUser.uid, 'notes'),
+                    orderBy('createdAt', 'desc')
+                );
+                
+                const querySnapshot = await getDocs(notesQuery);
+                const notesList = document.getElementById('notesList');
+                
+                if (!notesList) return;
+                
+                if (querySnapshot.empty) {
+                    notesList.innerHTML = '<p style="color: #666; text-align: center;">No notes saved yet</p>';
+                    return;
+                }
+                
+                notesList.innerHTML = '';
+                
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const item = document.createElement('li');
+                    item.innerHTML = `
+                        <div>
+                            <strong>${decryptData(data.title)}</strong><br>
+                            <small>${decryptData(data.content).substring(0, 50)}${decryptData(data.content).length > 50 ? '...' : ''}</small>
+                        </div>
+                        <div>
+                            <button class="btn" onclick="viewNote('${docSnap.id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-danger" onclick="deleteItem('notes', '${docSnap.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    notesList.appendChild(item);
+                });
+            } catch (error) {
+                console.error('Error loading notes:', error);
+                document.getElementById('notesList').innerHTML = '<p style="color: #dc3545;">Error loading notes</p>';
+            }
+        }
+
+        async function viewNote(noteId) {
+            try {
+                const noteDoc = await getDoc(doc(db, 'vaults', currentUser.uid, 'notes', noteId));
+                if (noteDoc.exists()) {
+                    const data = noteDoc.data();
+                    alert(`Title: ${decryptData(data.title)}\n\nContent: ${decryptData(data.content)}`);
+                }
+            } catch (error) {
+                console.error('Error viewing note:', error);
+                alert('Failed to load note');
+            }
+        }
+    </script>
+    <script><!-- Add this function to users.html script -->
+function goToHome() {
+    window.location.href = "index.html";
+}. </script>
+</body>
+</html>
